@@ -27,8 +27,8 @@ const Login = () => {
               <LoginForm />
             </div>
             <p className="text-center mt-12 ">
-              Have an account already?
-              <span className="text-[#0095F6] ml-1">Log in</span>
+              Don't have an account?
+              <span className="text-[#0095F6] ml-1">Sign up</span>
             </p>
           </div>
         </div>
