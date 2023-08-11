@@ -28,7 +28,9 @@ const Login = () => {
             </div>
             <p className="text-center mt-12 ">
               Don't have an account?
-              <span className="text-[#0095F6] ml-1">Sign up</span>
+              <span className="text-[#0095F6] ml-1 cursor-pointer">
+                Sign up
+              </span>
             </p>
           </div>
         </div>
