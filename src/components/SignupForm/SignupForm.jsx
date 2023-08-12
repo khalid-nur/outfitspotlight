@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { BsFillExclamationCircleFill } from "react-icons/bs";
+import { useSignup } from "../../hooks/useSignup";
 
 import DefaultAvatar from "../../assets/signup-default-avatar.png";
+import Loader from "../Loader/Loader";
 
 const SignupForm = () => {
   const [username, setUsername] = useState("");
@@ -9,44 +11,35 @@ const SignupForm = () => {
   const [password, setPassword] = useState("");
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [thumbnail, setThumbnail] = useState(DefaultAvatar);
-  const [error, setError] = useState({
+  const [customError, setCustomError] = useState({
     username: "",
     image: "",
-    password: "",
   });
+  const { signup, isPending, error } = useSignup();
 
   const submitHandler = (e) => {
     e.preventDefault();
 
-    setError((prevError) => ({ ...prevError, username: "" })); // Clear the 'username' error message.
-    setError((prevError) => ({ ...prevError, password: "" })); // Clear the 'password' error message.
+    setCustomError((prevError) => ({ ...prevError, username: "" })); // Clear the 'username' error message.
 
     // Check if the length of the username is less than 3 characters.
     if (username.length < 3) {
-      setError((prevError) => ({
+      setCustomError((prevError) => ({
         ...prevError,
         username: "Username must be at least three characters long", // Set the 'username' error message.
       }));
       return;
     }
 
-    // Check if the length of the password is less than 6 characters.
-    if (password.length < 6) {
-      setError((prevError) => ({
-        ...prevError,
-        password: "Password should consist of at least 6 characters", // Set the 'username' error message.
-      }));
-      return;
-    }
-
-    console.log(username, email, password, thumbnail);
+    // If the username is valid, proceed with the signup process.
+    signup(username, email, password);
   };
 
   const imageChangeHandler = (e) => {
     const selectedImage = e.target.files[0]; // Get the selected image from the input
 
     if (selectedImage) {
-      setError(null); // Clear any previous error message
+      setCustomError(null); // Clear any previous error message
       setThumbnail(DefaultAvatar); // Set the default thumbnail image
 
       const reader = new FileReader();
@@ -56,7 +49,7 @@ const SignupForm = () => {
         setThumbnailPreview(DefaultAvatar); // Set a default image preview
         setThumbnail(null); // Clear the thumbnail
 
-        setError((prevError) => ({
+        setCustomError((prevError) => ({
           ...prevError,
           image: "Invalid image", // Set the error message for invalid image
         }));
@@ -92,10 +85,12 @@ const SignupForm = () => {
           />
         </div>
 
-        {error?.username && (
-          <div className="text-red-600 text-sm mt-1">{error.username}</div>
+        {/* Display 'username' validation error */}
+        {customError?.username && (
+          <div className="text-red-600 text-sm mt-1">
+            {customError.username}
+          </div>
         )}
-        {/* <div>{error}</div> */}
       </div>
 
       <div className="mt-6">
@@ -113,6 +108,13 @@ const SignupForm = () => {
             value={email}
           />
         </div>
+
+        {/* Display error for existing email  */}
+        {error && error.includes("auth/email-already-in-use") && (
+          <div className="text-red-600 text-sm mt-1">
+            Email already exists. Please use a different email.
+          </div>
+        )}
       </div>
 
       <div className="mt-6">
@@ -122,7 +124,6 @@ const SignupForm = () => {
         >
           Password
         </label>
-
         <div className="mt-1 rounded-md shadow-sm">
           <input
             className="w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
@@ -135,8 +136,11 @@ const SignupForm = () => {
           />
         </div>
 
-        {error?.password && (
-          <div className="text-red-600 text-sm mt-1">{error.password}</div>
+        {/* Display error for weak password */}
+        {error && error.includes("auth/weak-password") && (
+          <div className="text-red-600 text-sm mt-1">
+            Password should consist of at least 6 characters
+          </div>
         )}
       </div>
 
@@ -147,11 +151,12 @@ const SignupForm = () => {
           alt="default avatar"
         />
 
+        {/* Display image error message */}
         <div className=" absolute -top-3 left-14">
-          {error?.image && (
+          {customError?.image && (
             <div className="flex items-center gap-1 text-sm border border-red-600 px-1 rounded-full">
               <BsFillExclamationCircleFill className="text-red-600" />{" "}
-              {error.image}
+              {customError.image}
             </div>
           )}
         </div>
@@ -175,12 +180,18 @@ const SignupForm = () => {
         <span className="w-full rounded-md shadow-sm">
           <button
             className={`"flex justify-center w-full px-4 py-2 md:text-lg font-medium text-white bg-[#0095F6] border border-transparent rounded-full  focus:outline-none transition duration-150 ease-in-out  ${
-              error?.image ? "cursor-not-allowed " : "cursor-pointer "
+              customError?.image ? "cursor-not-allowed " : "cursor-pointer "
             } "`}
             type="submit"
-            disabled={!!error?.image}
+            disabled={!!customError?.image} // Disable the button if there is an 'image' validation error
           >
-            Sign up
+            {isPending ? (
+              <div className="text-white">
+                <Loader /> // Display a loading if the signup is pending
+              </div>
+            ) : (
+              "Sign up"
+            )}
           </button>
         </span>
       </div>
