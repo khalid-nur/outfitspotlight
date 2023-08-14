@@ -1,18 +1,32 @@
 import { useState } from "react";
+import { useLogin } from "../../hooks/useLogin";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login, error, isPending } = useLogin();
+
   const submitHandler = (e) => {
     e.preventDefault();
 
+    login(email, password);
     console.log(email);
     console.log(password);
   };
 
   return (
     <form onSubmit={submitHandler}>
+      {/* Display a message when there's an error due to multiple unsuccessful login attempts  */}
+      <div className=" max-w-[370px] mx-auto">
+        {error && error.includes("auth/too-many-requests") && (
+          <div className="text-white bg-[#E87C03] py-3 px-3 text-sm text-center  mb-8 rounded-md">
+            Account temporarily disabled due to too many failed login attempts.
+            Try again later to restore.
+          </div>
+        )}
+      </div>
+
       <div>
         <label htmlFor="email" className="text-sm font-medium leading-5">
           Email
@@ -29,6 +43,14 @@ const LoginForm = () => {
             value={email}
           />
         </div>
+
+        {/* Display a message when there's an error where users account with the provided email address could not be found  */}
+        {error && error.includes("auth/user-not-found") && (
+          <div className="text-red-600 text-sm tracking-wide cursor-pointer mt-1">
+            Sorry, we can't find an account with this email address. Please try
+            again or <span className=" underline ">create a new account</span>
+          </div>
+        )}
       </div>
 
       <div className="mt-6">
@@ -50,6 +72,13 @@ const LoginForm = () => {
             value={password}
           />
         </div>
+
+        {/* Display an error message if the error user that the entered password is incorrect  */}
+        {error && error.includes("auth/wrong-password") && (
+          <div className="text-red-600 text-sm tracking-wide cursor-pointer mt-1">
+            Incorrect password. Please try again
+          </div>
+        )}
       </div>
 
       <div className="mt-6">
