@@ -4,8 +4,12 @@ import DefaultAvatar from "../../assets/signup-default-avatar.png";
 import { RiMoonClearLine } from "react-icons/ri";
 import { HiOutlineSun } from "react-icons/hi";
 
+import { useLogout } from "../../hooks/useLogout";
+
 const UserDropdown = ({ popUp }) => {
   const [isDark, setIsDark] = useState(true);
+
+  const { logout } = useLogout();
 
   //   Toggle dark mode
   const darkMode = () => {
@@ -26,7 +30,7 @@ const UserDropdown = ({ popUp }) => {
   return (
     <div
       className={`w-[160px] h-[260px] xl:w-[250px] xl:h-[220px]  rounded shadow-md p-2 ${
-        popUp ? "opacity-100" : "opacity-0"
+        popUp ? "opacity-100" : "opacity-0 pointer-events-none"
       } transition-opacity duration-300 ease-in-out border dark:border-[#262626] dark:bg-black`}
     >
       <div className="flex flex-col items-baseline xl:flex-row xl:items-center mb-1 ">
@@ -55,7 +59,10 @@ const UserDropdown = ({ popUp }) => {
           <li className="text-black/60 hover:underline hover:underline-offset-4 cursor-pointer dark:text-white">
             Help Center
           </li>
-          <li className="text-black/60 hover:underline hover:underline-offset-4 cursor-pointer dark:text-white">
+          <li
+            className="text-black/60 hover:underline hover:underline-offset-4 cursor-pointer dark:text-white"
+            onClick={logout}
+          >
             Logout
           </li>
         </ul>

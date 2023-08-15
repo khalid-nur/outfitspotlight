@@ -4,8 +4,12 @@ import DefaultAvatar from "../../assets/signup-default-avatar.png";
 import { RiMoonClearLine } from "react-icons/ri";
 import { HiOutlineSun } from "react-icons/hi";
 
+import { useLogout } from "../../hooks/useLogout";
+
 const UserSidebar = ({ popUp, togglePopup }) => {
   const [isDark, setIsDark] = useState(true);
+
+  const { logout } = useLogout();
 
   //   Toggle dark mode
   const darkMode = () => {
@@ -54,7 +58,10 @@ const UserSidebar = ({ popUp, togglePopup }) => {
           <li className="text-black/60 hover:underline hover:underline-offset-4 cursor-pointer dark:text-white">
             Help Center
           </li>
-          <li className="text-black/60 hover:underline hover:underline-offset-4 cursor-pointer dark:text-white">
+          <li
+            className="text-black/60 hover:underline hover:underline-offset-4 cursor-pointer dark:text-white"
+            onClick={logout}
+          >
             Logout
           </li>
         </ul>
