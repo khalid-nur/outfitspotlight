@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
 
+import { useNavigate } from "react-router-dom";
+
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const { login, error, isPending } = useLogin();
 
@@ -48,7 +52,10 @@ const LoginForm = () => {
         {error && error.includes("auth/user-not-found") && (
           <div className="text-red-600 text-sm tracking-wide cursor-pointer mt-1">
             Sorry, we can't find an account with this email address. Please try
-            again or <span className=" underline ">create a new account</span>
+            again or{" "}
+            <span className=" underline " onClick={() => navigate("/signup")}>
+              create a new account
+            </span>
           </div>
         )}
       </div>

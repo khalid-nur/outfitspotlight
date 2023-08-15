@@ -185,9 +185,10 @@ const SignupForm = () => {
             type="submit"
             disabled={!!customError?.image} // Disable the button if there is an 'image' validation error
           >
+            {/* Display a loading if the signup is pending */}
             {isPending ? (
               <div className="text-white">
-                <Loader /> // Display a loading if the signup is pending
+                <Loader />
               </div>
             ) : (
               "Sign up"

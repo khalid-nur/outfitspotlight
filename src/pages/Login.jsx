@@ -1,9 +1,12 @@
 import React from "react";
 import EntryOslLogo from "../assets/entry-logo.png";
 import LoginBackground from "../assets/osl-login-background.jpg";
+
 import LoginForm from "../components/LoginForm/LoginForm";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   return (
     <div className="h-screen w-full flex flex-col md:flex-row ">
       <img
@@ -18,8 +21,11 @@ const Login = () => {
               <img src={EntryOslLogo} alt="OSL OutfitSpotlight Entry Logo" />
 
               <p className="mt-2 text-sm font-medium text-center text-[#737373] leading-5  tracking-tighter md:text-base lg:text-lg">
-                Sign up to embrace the spotlight. Experience stunning outfits to
-                redefine your signature style
+                Enter the spotlight at OutfitSpotlight. Elevate your style to
+                new heights.
+                <span className=" font-semibold text-black/70 ml-1">
+                  Join us now!
+                </span>
               </p>
             </div>
 
@@ -28,7 +34,10 @@ const Login = () => {
             </div>
             <p className="text-center mt-12 ">
               Don't have an account?
-              <span className="text-[#0095F6] ml-1 cursor-pointer">
+              <span
+                className="text-[#0095F6] ml-1 cursor-pointer"
+                onClick={() => navigate("/signup")}
+              >
                 Sign up
               </span>
             </p>

@@ -21,7 +21,12 @@ const App = () => {
               // If there is no user logged in, direct them to the Login page.
               // Otherwise, redirect to the Home page.
             />
-            <Route path="/signup" element={<Register />} />
+            <Route
+              path="/signup"
+              element={!user ? <Register /> : <Navigate to="/home" />}
+              // If there is no user register in, direct them to the Register page.
+              // Otherwise, redirect to the Home page.
+            />
 
             <Route
               path="/home"
