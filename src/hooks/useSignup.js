@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { auth, storage } from "../firebase/firebaseConfig";
+import { auth, storage, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import { doc, setDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useAuthContext } from "./useAuthContext";
 
 export const useSignup = () => {
@@ -43,6 +43,26 @@ export const useSignup = () => {
       await updateProfile(auth.currentUser, {
         displayName: username,
         photoURL: thumbnailImageUrl,
+      });
+
+      // Create a user collection to store user info
+      const usersCollection = collection(db, "users");
+      // Get the current user's unique ID
+      const userId = auth.currentUser.uid;
+      // Get the current user's email
+      const userEmail = auth.currentUser.email;
+      // Create a reference to the document for the current user within the users collection
+      const userDoc = doc(usersCollection, userId);
+
+      // Use 'setDoc' to add or update a document in the 'users' collection
+      await setDoc(userDoc, {
+        username: username,
+        photoURL: thumbnailImageUrl,
+        userId: userId,
+        userEmail: userEmail,
+        bio: "",
+        timestamp: serverTimestamp(),
+        darkMode: false,
       });
 
       // Dispatch login action
