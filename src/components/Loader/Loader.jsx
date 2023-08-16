@@ -2,7 +2,11 @@ import React from "react";
 import { Spin } from "antd";
 
 const Loader = () => {
-  return <Spin size="medium" />;
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <Spin size="large" />
+    </div>
+  );
 };
 
 export default Loader;
