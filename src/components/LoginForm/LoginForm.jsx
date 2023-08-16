@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
 
 import { useNavigate } from "react-router-dom";
+import ButtonLoader from "../ButtonLoader/ButtonLoader";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -94,7 +95,8 @@ const LoginForm = () => {
             className="flex justify-center w-full px-4 py-2 md:text-lg font-medium text-white bg-[#0095F6] border border-transparent rounded-full  focus:outline-none transition duration-150 ease-in-out"
             type="submit"
           >
-            Log in
+            {/* Display a loading if the signup is pending */}
+            {isPending ? <div>{<ButtonLoader />}</div> : "Log in"}
           </button>
         </span>
       </div>

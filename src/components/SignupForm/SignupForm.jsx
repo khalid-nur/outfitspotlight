@@ -3,7 +3,7 @@ import { BsFillExclamationCircleFill } from "react-icons/bs";
 import { useSignup } from "../../hooks/useSignup";
 
 import DefaultAvatar from "../../assets/signup-default-avatar.png";
-import Loader from "../Loader/Loader";
+import ButtonLoader from "../ButtonLoader/ButtonLoader";
 
 const SignupForm = () => {
   const [username, setUsername] = useState("");
@@ -186,13 +186,7 @@ const SignupForm = () => {
             disabled={!!customError?.image} // Disable the button if there is an 'image' validation error
           >
             {/* Display a loading if the signup is pending */}
-            {isPending ? (
-              <div className="text-white">
-                <Loader />
-              </div>
-            ) : (
-              "Sign up"
-            )}
+            {isPending ? <div>{<ButtonLoader />}</div> : "Sign up"}
           </button>
         </span>
       </div>
