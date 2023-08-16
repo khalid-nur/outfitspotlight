@@ -10,7 +10,7 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
-  const [thumbnail, setThumbnail] = useState(DefaultAvatar);
+  const [thumbnail, setThumbnail] = useState(null);
   const [customError, setCustomError] = useState({
     username: "",
     image: "",
@@ -32,7 +32,7 @@ const SignupForm = () => {
     }
 
     // If the username is valid, proceed with the signup process.
-    signup(username, email, password);
+    signup(username, email, password, thumbnail);
   };
 
   const imageChangeHandler = (e) => {
@@ -40,7 +40,7 @@ const SignupForm = () => {
 
     if (selectedImage) {
       setCustomError(null); // Clear any previous error message
-      setThumbnail(DefaultAvatar); // Set the default thumbnail image
+      setThumbnail(null); // Set the default thumbnail image
 
       const reader = new FileReader();
 

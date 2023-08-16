@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { auth } from "../firebase/firebaseConfig";
+import { auth, storage } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import { useAuthContext } from "./useAuthContext";
 
@@ -14,6 +15,7 @@ export const useSignup = () => {
     setError(null); // Clear any previous errors
     setIsPending(true); // Set loading state
 
+    console.log(username);
     try {
       // Create user with email and password
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -21,10 +23,26 @@ export const useSignup = () => {
       if (!res.user) {
         throw new Error("could not complete signup");
       }
+      // Default value for thumbnailImageUrl
+      let thumbnailImageUrl = null;
 
-      // Add display name to user
+      if (thumbnail) {
+        // Define the upload path for the thumbnail
+        const thumbnailUploadPath = `thumbnails/${auth.currentUser.uid}/${thumbnail.name}`;
+
+        // Upload thumbnail to storage
+        await uploadBytes(ref(storage, thumbnailUploadPath), thumbnail);
+
+        // Get the download URL of the uploaded thumbnail
+        thumbnailImageUrl = await getDownloadURL(
+          ref(storage, thumbnailUploadPath)
+        );
+      }
+
+      // Update user profile with display name and photo URL
       await updateProfile(auth.currentUser, {
         displayName: username,
+        photoURL: thumbnailImageUrl,
       });
 
       // Dispatch login action
