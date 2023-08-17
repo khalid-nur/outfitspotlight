@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth, storage, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -8,6 +8,7 @@ import { useAuthContext } from "./useAuthContext";
 export const useSignup = () => {
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
+  const [isCancelled, setIsCancelled] = useState(false);
 
   const { dispatch } = useAuthContext();
 
@@ -54,7 +55,7 @@ export const useSignup = () => {
       // Create a reference to the document for the current user within the users collection
       const userDoc = doc(usersCollection, userId);
 
-      // Use 'setDoc' to add or update a document in the 'users' collection
+      // Add a document in the 'users' collection
       await setDoc(userDoc, {
         username: username,
         photoURL: thumbnailImageUrl,
@@ -68,13 +69,26 @@ export const useSignup = () => {
       // Dispatch login action
       dispatch({ type: "LOGIN", payload: res.user });
 
-      setIsPending(false); // Clear loading state
-      setError(null); // Clear any errors
+      // Check if the component is not unmounted before updating state
+      if (!isCancelled) {
+        setIsPending(false); // Clear loading state
+        setError(null); // Clear any errors
+      }
     } catch (err) {
-      setError(err.message); // Set error message
-      setIsPending(false); // Clear loading state
+      // Check if the component is not unmounted before updating state
+      if (!isCancelled) {
+        setError(err.message); // Set error message
+        setIsPending(false); // Clear loading state
+      }
     }
   };
+
+  // If component unmounting, set isCancelled to true
+  useEffect(() => {
+    return () => {
+      setIsCancelled(true);
+    };
+  }, []);
 
   return { error, isPending, signup };
 };
