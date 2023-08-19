@@ -4,6 +4,7 @@ import DefaultAvatar from "../../assets/signup-default-avatar.png";
 
 import UserDropdown from "../UserDropdown/UserDropdown";
 import UserSidebar from "../UserSidebar/UserSidebar";
+import PostFeedButton from "../PostFeedButton/PostFeedButton";
 
 import {
   AiOutlineHome,
@@ -54,10 +55,7 @@ const Navbar = () => {
               <p className=" text-xs font-semibold dark:text-white">Explore</p>
             </div>
             <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer md:hidden dark:text-white">
-              <AiOutlinePlusSquare
-                className=" cursor-pointer dark:text-white"
-                size={25}
-              />
+              <PostFeedButton />
               <p className=" text-xs font-semibold dark:text-white">Post</p>
             </div>
             <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer md:hidden">
