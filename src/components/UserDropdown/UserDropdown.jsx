@@ -1,50 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DefaultAvatar from "../../assets/signup-default-avatar.png";
 
 import { RiMoonClearLine } from "react-icons/ri";
 import { HiOutlineSun } from "react-icons/hi";
 
 import { useLogout } from "../../hooks/useLogout";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const UserDropdown = ({ popUp }) => {
-  const [isDark, setIsDark] = useState(true);
+  // Initialize the isDark state by retrieving the value stored in localStorage.
+  // If there's no value in localStorage default to false
+  const [isDark, setIsDark] = useState(
+    JSON.parse(localStorage.getItem("isDark")) || false
+  );
 
+  // Retrieve user object from useAuthContext hook
+  const { user } = useAuthContext();
+
+  // Get logout function from useLogout hook for logging out a user
   const { logout } = useLogout();
 
   //   Toggle dark mode
   const darkMode = () => {
-    if (isDark) {
-      // Add "dark" class to the <html> element to enable dark mode
-      document.querySelector("html").classList.add("dark");
-    } else {
-      // Remove "dark" class from the <html> element to disable dark mode
-      document.querySelector("html").classList.remove("dark");
-    }
+    // Toggle the current value of the dark mode state to get the updated value
+    const newIsDark = !isDark;
 
-    // Toggle the value of 'isDark' state
-    setIsDark(!isDark);
+    // Set the updated value for the dark mode state
+    setIsDark(newIsDark);
+
+    // Update localStorage with the updated dark mode state
+    localStorage.setItem("isDark", JSON.stringify(newIsDark));
   };
 
-  console.log(isDark);
+  // Apply the dark class to the html element if isDark is true and remove the class if isDark is false.
+  useEffect(() => {
+    if (isDark) {
+      document.querySelector("html").classList.add("dark");
+    } else {
+      document.querySelector("html").classList.remove("dark");
+    }
+  }, [isDark]);
 
   return (
     <div
       className={`w-[160px] h-[260px] xl:w-[250px] xl:h-[220px]  rounded shadow-md p-2 ${
-        popUp ? "opacity-100" : "opacity-0 pointer-events-none"
+        popUp ? "opacity-100" : "opacity-0 hidden"
       } transition-opacity duration-300 ease-in-out border dark:border-[#262626] dark:bg-black`}
     >
       <div className="flex flex-col items-baseline xl:flex-row xl:items-center mb-1 ">
         <img
           className="w-14 h-14 rounded-full mr-4 cursor-pointer "
-          src={DefaultAvatar}
+          src={user?.photoURL ?? DefaultAvatar}
           alt=""
         />
         <div className="flex flex-col">
           <h1 className="text-xl font-semibold dark:text-white cursor-pointer">
-            lifewithjazz
+            {user?.displayName}
           </h1>
           <h2 className="text-xs xl:text-sm dark:text-white cursor-pointer">
-            lifewithjazz@gmail.com
+            {user?.email}
           </h2>
         </div>
       </div>
@@ -66,14 +80,19 @@ const UserDropdown = ({ popUp }) => {
             Logout
           </li>
         </ul>
-        <div className="flex justify-end my-2" onClick={darkMode}>
+        <div className="flex justify-end my-2">
           {/* Toggle dark mode icon */}
-          {isDark ? (
-            <RiMoonClearLine className="cursor-pointer" size={20} />
+          {!isDark ? (
+            <RiMoonClearLine
+              className="cursor-pointer"
+              size={20}
+              onClick={darkMode}
+            />
           ) : (
             <HiOutlineSun
               className="cursor-pointer dark:text-white"
               size={20}
+              onClick={darkMode}
             />
           )}
         </div>

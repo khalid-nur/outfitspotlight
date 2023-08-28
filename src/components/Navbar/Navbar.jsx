@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation, Link } from "react-router-dom";
 import MainLogo from "../../assets/main-logo.png";
 import DefaultAvatar from "../../assets/signup-default-avatar.png";
 
@@ -8,18 +9,24 @@ import PostFeedButton from "../PostFeedButton/PostFeedButton";
 
 import {
   AiOutlineHome,
+  AiTwotoneHome,
   AiOutlineSearch,
   AiOutlineCompass,
+  AiFillCompass,
   AiOutlinePlusSquare,
 } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
 
+import { useAuthContext } from "../../hooks/useAuthContext";
+
 const Navbar = () => {
   const [popupVisible, setPopupVisible] = useState(false);
 
+  const { user } = useAuthContext();
+
+  let location = useLocation();
   // Display popup
   const displayPopup = () => {
-    console.log("clicked");
     setPopupVisible(!popupVisible);
   };
 
@@ -46,14 +53,30 @@ const Navbar = () => {
         </div>
         <nav className="flex items-center justify-center   sm:divide-x ">
           <div className=" relative flex items-center justify-center   gap-x-4 md:gap-x-8 ">
-            <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer ">
-              <AiOutlineHome className="dark:text-white" size={25} />
-              <p className=" text-xs font-semibold dark:text-white">Home</p>
-            </div>
-            <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer">
-              <AiOutlineCompass className="dark:text-white" size={25} />
-              <p className=" text-xs font-semibold dark:text-white">Explore</p>
-            </div>
+            <Link to={"/home"}>
+              <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer ">
+                {location.pathname.includes("home") ? (
+                  <AiTwotoneHome className="dark:text-white" size={25} />
+                ) : (
+                  <AiOutlineHome className="dark:text-white" size={25} />
+                )}
+                <p className=" text-xs font-semibold dark:text-white">Home</p>
+              </div>
+            </Link>
+
+            <Link to={"/explore"}>
+              <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer">
+                {location.pathname.includes("explore") ? (
+                  <AiFillCompass className="dark:text-white" size={25} />
+                ) : (
+                  <AiOutlineCompass className="dark:text-white" size={25} />
+                )}
+                <p className=" text-xs font-semibold dark:text-white">
+                  Explore
+                </p>
+              </div>
+            </Link>
+
             <div className="flex flex-col items-center p-1 md:p-0 cursor-pointer md:hidden dark:text-white">
               <PostFeedButton />
               <p className=" text-xs font-semibold dark:text-white">Post</p>
@@ -69,10 +92,10 @@ const Navbar = () => {
               </p>
             </div>
 
-            <div className="  w-11 h-11  md:w-14 md:h-14 flex justify-center items-center rounded-full bg-gray-500 text-xl text-white cursor-pointer ">
+            <div className="  w-11 h-11  md:w-14 md:h-14 flex justify-center items-center rounded-full bg-[#efefef] text-xl text-white cursor-pointer ">
               <img
-                src={DefaultAvatar}
                 className="  w-full h-full rounded-full"
+                src={user?.photoURL ?? DefaultAvatar}
                 onClick={displayPopup}
               />
             </div>
