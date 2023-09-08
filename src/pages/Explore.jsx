@@ -1,10 +1,10 @@
 import React from "react";
-import DefaultAvatar from "../assets/signup-default-avatar.png";
 import { RxDotFilled } from "react-icons/rx";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { HiOutlineHeart } from "react-icons/hi2";
 import { useCollection } from "../hooks/useCollection";
 import Skeleton from "../components/Skeleton/Skeleton";
+import { getCurrentTimeStamp } from "../helpers/useMoment";
 
 const Explore = () => {
   const { documents, error, isPending } = useCollection("posts");
@@ -50,7 +50,9 @@ const Explore = () => {
                       Follow
                     </p>
                   </div>
-                  <p className=" text-xs dark:text-[#A8A8A8]">9h</p>
+                  <p className=" text-xs  md:text-sm text-[#71767b] dark:text-[#A8A8A8]">
+                    {getCurrentTimeStamp(docs.timestamp)}
+                  </p>
                 </div>
               </div>
             </div>
