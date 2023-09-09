@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HomeLayout from "./Layouts/HomeLayout";
 import ExploreLayout from "./Layouts/ExploreLayout";
+import ProfileLayout from "./Layouts/ProfileLayout";
 
 const App = () => {
   const { authIsReady, user } = useAuthContext();
@@ -40,6 +41,13 @@ const App = () => {
               path="/explore"
               element={user ? <ExploreLayout /> : <Navigate to="/" />}
               // If a user is logged in, direct them to the Explore page.
+              // Otherwise, redirect to the Login page.
+            />
+
+            <Route
+              path="/profile"
+              element={user ? <ProfileLayout /> : <Navigate to="/" />}
+              // If a user is logged in, direct them to the Profile page.
               // Otherwise, redirect to the Login page.
             />
           </Routes>
