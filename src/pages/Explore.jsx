@@ -5,6 +5,7 @@ import { HiOutlineHeart } from "react-icons/hi2";
 import { useCollection } from "../hooks/useCollection";
 import Skeleton from "../components/Skeleton/Skeleton";
 import { getCurrentTimeStamp } from "../helpers/useMoment";
+import { Link } from "react-router-dom";
 
 const Explore = () => {
   const { documents, error, isPending } = useCollection("posts");
@@ -35,9 +36,13 @@ const Explore = () => {
 
                 <div className="flex flex-col w-4/5 md:w-fit ">
                   <div className="flex items-center justify-between">
-                    <p className="text-base font-semibold cursor-pointer dark:text-white">
-                      {docs.username}
-                    </p>
+                    {/* A clickable link to navigate to user profiles */}
+                    <Link to={`/profile/${docs.userId}`}>
+                      <p className="text-base font-semibold cursor-pointer dark:text-white">
+                        {docs.username}
+                      </p>
+                    </Link>
+
                     <RxDotFilled
                       className="hidden md:block dark:text-[#A8A8A8]"
                       size={10}

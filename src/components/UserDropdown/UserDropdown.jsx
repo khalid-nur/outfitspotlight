@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import DefaultAvatar from "../../assets/signup-default-avatar.png";
-
 import { RiMoonClearLine } from "react-icons/ri";
 import { HiOutlineSun } from "react-icons/hi";
-
 import { useLogout } from "../../hooks/useLogout";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { Link } from "react-router-dom";
 
 const UserDropdown = ({ popUp }) => {
   // Initialize the isDark state by retrieving the value stored in localStorage.
@@ -43,20 +42,28 @@ const UserDropdown = ({ popUp }) => {
 
   return (
     <div
-      className={`w-[160px] h-[260px] xl:w-[250px] xl:h-[220px]  rounded shadow-md p-2 ${
+      className={`w-[160px] h-[260px] xl:w-[250px] xl:h-[220px] bg-[#f8f7f5]  rounded shadow-md p-2 ${
         popUp ? "opacity-100" : "opacity-0 hidden"
       } transition-opacity duration-300 ease-in-out border dark:border-[#262626] dark:bg-black`}
     >
       <div className="flex flex-col items-baseline xl:flex-row xl:items-center mb-1 ">
-        <img
-          className="w-14 h-14 rounded-full mr-4 cursor-pointer "
-          src={user?.photoURL ?? DefaultAvatar}
-          alt=""
-        />
+        {/* A clickable link to navigate to user profiles */}
+        <Link to={`/profile/${user?.uid}`}>
+          <img
+            className="w-14 h-14 rounded-full mr-4 cursor-pointer "
+            src={user?.photoURL ?? DefaultAvatar}
+            alt=""
+          />
+        </Link>
+
         <div className="flex flex-col">
-          <h1 className="text-xl font-semibold dark:text-white cursor-pointer">
-            {user?.displayName}
-          </h1>
+          {/* A clickable link to navigate to user profiles */}
+          <Link to={`/profile/${user?.uid}`}>
+            <h1 className="text-xl font-semibold dark:text-white cursor-pointer">
+              {user?.displayName}
+            </h1>
+          </Link>
+
           <h2 className="text-xs xl:text-sm dark:text-white cursor-pointer">
             {user?.email}
           </h2>

@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import DefaultAvatar from "../../assets/signup-default-avatar.png";
-
 import { RiMoonClearLine } from "react-icons/ri";
 import { HiOutlineSun } from "react-icons/hi";
-
 import { useLogout } from "../../hooks/useLogout";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { Link } from "react-router-dom";
 
 const UserSidebar = ({ popUp, togglePopup }) => {
   // Initialize the isDark state by retrieving the value stored in localStorage.
@@ -54,10 +53,15 @@ const UserSidebar = ({ popUp, togglePopup }) => {
           alt=""
           onClick={togglePopup}
         />
+
         <div className="flex flex-col mr-4">
-          <h1 className="text-xl font-semibold text-right cursor-pointer">
-            {user?.displayName}
-          </h1>
+          {/* A clickable link to navigate to user profiles */}
+          <Link to={`/profile/${user?.uid}`}>
+            <h1 className="text-xl font-semibold text-right cursor-pointer">
+              {user?.displayName}
+            </h1>
+          </Link>
+
           <h2 className="text-xs xl:text-sm cursor-pointer">{user?.email}</h2>
         </div>
       </div>

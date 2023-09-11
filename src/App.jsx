@@ -45,7 +45,7 @@ const App = () => {
             />
 
             <Route
-              path="/profile"
+              path="/profile/:id"
               element={user ? <ProfileLayout /> : <Navigate to="/" />}
               // If a user is logged in, direct them to the Profile page.
               // Otherwise, redirect to the Login page.
