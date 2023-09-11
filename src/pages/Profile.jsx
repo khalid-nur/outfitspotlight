@@ -1,9 +1,31 @@
-import React from "react";
-import DefaultAvatar from "../assets/signup-default-avatar.png";
+import { useEffect, useState } from "react";
 import { LiaCalendarAlt } from "react-icons/lia";
 import { BsLink45Deg } from "react-icons/bs";
+import { useParams } from "react-router-dom";
+import { useCollection } from "../hooks/useCollection";
+import moment from "moment";
+import PhotoGrid from "../components/ProfilePhotoGrid/PhotoGrid";
 
 function Profile() {
+  // State to hold the user profile data
+  const [currentUserProfile, setCurrentUserProfile] = useState(null);
+  // Fetch user data and post data for firebase
+  const { documents: userDocs } = useCollection("users");
+  const { documents } = useCollection("posts");
+
+  // Get the 'id' parameter from the URL (this should have id of the users Id for URL)
+  const { id } = useParams();
+
+  // useEffect to update the user profile data when 'userDocs' or 'id' changes
+  useEffect(() => {
+    // Find the current user's data based on 'id'
+    const currentUser = userDocs?.find((userDoc) => userDoc?.userId === id);
+
+    // Update the 'currentUserProfile' state
+    setCurrentUserProfile(currentUser);
+    return () => {};
+  }, [userDocs, id]);
+
   return (
     <>
       <div className="container max-w-5xl mx-auto flex flex-col items-center justify-center dark:bg-black ">
@@ -12,7 +34,7 @@ function Profile() {
           <div className="flex items-center justify-between px-4 py-3">
             <img
               className="h-32 w-32 md:h-44 md:w-44 cursor-pointer rounded-full"
-              src={DefaultAvatar}
+              src={currentUserProfile?.photoURL}
             />
 
             <div className=" hidden items-center gap-6 md:flex">
@@ -49,17 +71,13 @@ function Profile() {
           {/* <!-- Name  --> */}
           <div className="mt-2 px-4">
             <h2 className="text-xl font-medium tracking-tight dark:text-[#f5f5f5]">
-              lifewithjazz
+              {currentUserProfile?.username}
             </h2>
           </div>
 
           {/* <!-- Bio --> */}
           <div className=" max-w-md mt-4 px-4">
-            <p className="dark:text-[#f5f5f5]">
-              Designing, building and talking about digital products. ✨
-              Designing, building and talking about digital products. ✨
-              Designing, building and talking about digital products.
-            </p>
+            <p className="dark:text-[#f5f5f5]">{currentUserProfile?.bio}</p>
           </div>
 
           {/* <!-- Location, CTA and join date --> */}
@@ -72,7 +90,12 @@ function Profile() {
                 />
 
                 <p className="text-sm  md:text-base text-[#71767b] dark:text-gray-400">
-                  Joined <span>August 2023</span>
+                  Joined{" "}
+                  <span>
+                    {moment(currentUserProfile?.timestamp.toDate()).format(
+                      "MMMM YYYY"
+                    )}
+                  </span>
                 </p>
               </div>
               <BsLink45Deg
@@ -107,43 +130,8 @@ function Profile() {
         </div>
 
         {/* <!-- Photo Grid --> */}
-        <div className="grid grid-cols-3 gap-[2px] justify-between mt-4 md:mt-7">
-          <div className="max-w-[338px] h-40 md:h-[338px]">
-            <img
-              className="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1487530811176-3780de880c2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80"
-            />
-          </div>
-          <div className="max-w-[338px] h-40 md:h-[338px] ">
-            <img
-              className="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1614273445055-82e54a0e8089?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDd8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-            />
-          </div>
-          <div className="max-w-[338px] h-40 md:h-[338px] ">
-            <img
-              className="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1682685797857-97de838c192e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3387&q=80"
-            />
-          </div>
-          <div className="max-w-[338px] h-40 md:h-[338px] ">
-            <img
-              className="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1692866999796-bb538d3f9e92?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxOXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60"
-            />
-          </div>
-          <div className="max-w-[338px] h-40 md:h-[338px] ">
-            <img
-              className="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1692969959077-7b16772805c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3328&q=80"
-            />
-          </div>
-          <div className="max-w-[338px] h-40 md:h-[338px] ">
-            <img
-              className="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1692599076831-181663a5b26f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2335&q=80"
-            />
-          </div>
+        <div className="grid grid-cols-3 gap-1 justify-between mt-4 md:mt-7">
+          {documents && <PhotoGrid userPhotoDocs={documents} />}
         </div>
       </div>
     </>
