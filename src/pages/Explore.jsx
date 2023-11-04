@@ -6,6 +6,7 @@ import { useCollection } from "../hooks/useCollection";
 import Skeleton from "../components/Skeleton/Skeleton";
 import { getCurrentTimeStamp } from "../helpers/useMoment";
 import { Link } from "react-router-dom";
+import DefaultAvatar from "../assets/signup-default-avatar.png";
 
 const Explore = () => {
   const { documents, error, isPending } = useCollection("posts");
@@ -29,7 +30,7 @@ const Explore = () => {
                 <div className=" w-8 h-8 cursor-pointer  md:w-12 md:h-12 ">
                   <img
                     className="  w-full h-full rounded-full bg-[#efefef]"
-                    src={docs.photoURL}
+                    src={docs.photoURL ?? DefaultAvatar}
                     alt="icon"
                   />
                 </div>
