@@ -5,6 +5,10 @@ import { useParams } from "react-router-dom";
 import { useCollection } from "../hooks/useCollection";
 import moment from "moment";
 import PhotoGrid from "../components/ProfilePhotoGrid/PhotoGrid";
+import DefaultAvatar from "../assets/signup-default-avatar.png";
+import { useAuthContext } from "../hooks/useAuthContext";
+import FollowButton from "../components/FollowButton/FollowButton";
+import EditProfile from "../components/EditProfile/EditProfile";
 
 function Profile() {
   // State to hold the user profile data
@@ -12,9 +16,12 @@ function Profile() {
   // Fetch user data and post data for firebase
   const { documents: userDocs } = useCollection("users");
   const { documents } = useCollection("posts");
+  const { user } = useAuthContext();
 
   // Get the 'id' parameter from the URL (this should have id of the users Id for URL)
   const { id } = useParams();
+  console.log(user.uid);
+  console.log(id);
 
   // useEffect to update the user profile data when 'userDocs' or 'id' changes
   useEffect(() => {
@@ -34,11 +41,11 @@ function Profile() {
           <div className="flex items-center justify-between px-4 py-3">
             <img
               className="h-32 w-32 md:h-44 md:w-44 cursor-pointer rounded-full"
-              src={currentUserProfile?.photoURL}
+              src={currentUserProfile?.photoURL ?? DefaultAvatar}
             />
 
             <div className=" hidden items-center gap-6 md:flex">
-              <div className="flex flex-col items-center text-center cursor-pointer hover:underline">
+              <div className="flex flex-col items-center text-center">
                 <span className=" text-lg font-semibold dark:text-[#f5f5f5]">
                   8
                 </span>
@@ -46,7 +53,7 @@ function Profile() {
                   Post
                 </span>
               </div>
-              <div className="flex flex-col items-center cursor-pointer hover:underline">
+              <div className="flex flex-col items-center cursor-pointer ">
                 <span className=" text-lg font-semibold dark:text-[#f5f5f5]">
                   168
                 </span>
@@ -54,7 +61,7 @@ function Profile() {
                   Followers
                 </span>
               </div>
-              <div className=" flex flex-col items-center cursor-pointer hover:underline">
+              <div className=" flex flex-col items-center cursor-pointer ">
                 <span className=" text-lg font-semibold dark:text-[#f5f5f5]">
                   638
                 </span>
@@ -63,9 +70,7 @@ function Profile() {
                 </span>
               </div>
             </div>
-            <button className=" rounded-lg  self-baseline text-base text-black font-semibold bg-[#efefef]  px-4 py-1.5  hover:bg-[#dbdbdb] dark:text-[#f5f5f5] dark:bg-[#363636] dark:hover:bg-[#262626] ">
-              Edit profile
-            </button>
+            {user.uid === id ? <EditProfile /> : <FollowButton />}
           </div>
 
           {/* <!-- Name  --> */}
@@ -104,25 +109,26 @@ function Profile() {
               />
               <a
                 className="text-sm md:text-base text-sky-500 hover:underline"
-                href="https://www.linkedin.com/in/khalidnur/"
+                href={currentUserProfile?.webUrl}
                 target="_blank"
               >
-                instagram/lifewithjazz
+                {currentUserProfile?.webUrl.replace(/^(https?:\/\/)/, "")}
+                {/* instagram/lifewithjazz */}
               </a>
             </div>
           </div>
 
           {/* <!-- Tabs --> */}
           <div className="mt-3 flex justify-evenly md:hidden">
-            <div className="flex flex-col w-full cursor-pointer items-center justify-center p-2 transition duration-150 ease-in-out dark:text-[#f5f5f5] ">
+            <div className="flex flex-col w-full cursor-pointer items-center justify-center p-2 transition dark:text-[#f5f5f5] ">
               <span className=" text-lg font-semibold">8</span>
               <span className=" text-lg dark:text-[#f5f5f5] ">Post</span>
             </div>
-            <div className="flex flex-col w-full cursor-pointer items-center justify-center span-2 transition duration-150 ease-in-out dark:text-[#f5f5f5]  ">
+            <div className="flex flex-col w-full cursor-pointer items-center justify-center  dark:text-[#f5f5f5]  ">
               <span className=" text-lg font-semibold">168</span>
               <span className="text-lg  dark:text-[#f5f5f5] ">Followers</span>
             </div>
-            <div className="flex flex-col w-full cursor-pointer items-center justify-center span-2 transition duration-150 ease-in-out dark:text-[#f5f5f5] ">
+            <div className="flex flex-col w-full cursor-pointer items-center justify-center  dark:text-[#f5f5f5] ">
               <span className=" text-lg font-semibold">638</span>
               <span className=" text-lg  dark:text-[#f5f5f5] ">Following</span>
             </div>
