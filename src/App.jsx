@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import HomeLayout from "./Layouts/HomeLayout";
 import ExploreLayout from "./Layouts/ExploreLayout";
 import ProfileLayout from "./Layouts/ProfileLayout";
+import ProductLayout from "./Layouts/ProductLayout";
 
 const App = () => {
   const { authIsReady, user } = useAuthContext();
@@ -48,6 +49,13 @@ const App = () => {
               path="/profile/:id"
               element={user ? <ProfileLayout /> : <Navigate to="/" />}
               // If a user is logged in, direct them to the Profile page.
+              // Otherwise, redirect to the Login page.
+            />
+
+            <Route
+              path="/product/:id"
+              element={user ? <ProductLayout /> : <Navigate to="/" />}
+              // If a user is logged in, direct them to the user's product page.
               // Otherwise, redirect to the Login page.
             />
           </Routes>
