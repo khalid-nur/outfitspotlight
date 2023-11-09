@@ -63,7 +63,7 @@ export const useSignup = () => {
         userEmail: userEmail,
         bio: "",
         timestamp: serverTimestamp(),
-        darkMode: false,
+        webUrl: "",
       });
 
       // Dispatch login action
