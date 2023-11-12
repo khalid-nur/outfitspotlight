@@ -2,7 +2,7 @@ import moment from "moment";
 
 export const getCurrentTimeStamp = (postTime) => {
   // Calculate the duration between the current moment and when the post was created
-  const duration = moment.duration(moment().diff(postTime.toDate()));
+  const duration = moment.duration(moment().diff(postTime?.toDate()));
 
   // If the duration is less than 60 seconds
   if (duration.asSeconds() < 60) {
