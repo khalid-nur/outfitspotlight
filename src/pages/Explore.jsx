@@ -7,6 +7,7 @@ import Skeleton from "../components/Skeleton/Skeleton";
 import { getCurrentTimeStamp } from "../helpers/useMoment";
 import { Link } from "react-router-dom";
 import DefaultAvatar from "../assets/signup-default-avatar.png";
+import { doc } from "firebase/firestore";
 
 const Explore = () => {
   const { documents, error, isPending } = useCollection("posts");
@@ -37,13 +38,11 @@ const Explore = () => {
 
                 <div className="flex flex-col w-4/5 md:w-fit ">
                   <div className="flex items-center justify-between">
-                    {/* A clickable link to navigate to user profiles */}
                     <Link to={`/profile/${docs.userId}`}>
                       <p className="text-base font-semibold cursor-pointer dark:text-white">
                         {docs.username}
                       </p>
                     </Link>
-
                     <RxDotFilled
                       className="hidden md:block dark:text-[#A8A8A8]"
                       size={10}
@@ -64,11 +63,13 @@ const Explore = () => {
             </div>
 
             <div className="relative border h-[296px] md:h-[464px] bg-[#efefef] rounded  dark:border-[#262626]">
-              <img
-                className="w-full h-full object-cover rounded cursor-pointer"
-                src={docs.postImg}
-                alt="post"
-              />
+              <Link to={`/product/${docs.id}`}>
+                <img
+                  className="w-full h-full object-cover rounded cursor-pointer"
+                  src={docs.postImg}
+                  alt="post"
+                />
+              </Link>
               <div className=" absolute bottom-4 right-4  bg-white/60 p-1 rounded-full md:p-2 ">
                 <HiOutlineHeart
                   className=" stroke-black cursor-pointer hover:stroke-none hover:fill-gray-700"
