@@ -1,6 +1,13 @@
 import { useReducer } from "react";
 import { db } from "../firebase/firebaseConfig";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  setDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 // Set initial state for the firestoreReducer
 let initialState = {
@@ -19,6 +26,15 @@ const firestoreReducer = (state, action) => {
 
     // When a document has been successfully added
     case "ADDED_DOCUMENT":
+      return {
+        isPending: false,
+        document: action.payload,
+        success: true,
+        error: null,
+      };
+
+    // When a post has been successfully liked
+    case "LIKED_DOCUMENT":
       return {
         isPending: false,
         document: action.payload,
@@ -68,6 +84,34 @@ export const useFirebase = (col) => {
     }
   };
 
+  // Like Post function
+  const likePost = async (userId, postId, liked) => {
+    // Create a document reference using user ID and post ID
+    const docToLike = doc(ref, `${userId}_${postId}`);
+    let likedPost;
+
+    try {
+      // Check if the post is already liked
+      if (liked) {
+        // If liked, delete the document (unlike)
+        await deleteDoc(docToLike);
+      } else {
+        // If not liked, create a document to represent liking the post
+        likedPost = await setDoc(docToLike, { userId, postId });
+      }
+
+      // Update the state change with the new liked post
+      dispatch({
+        type: "LIKED_DOCUMENT",
+        payload: likedPost,
+      });
+    } catch (err) {
+      console.log(err);
+      // Dispatch an error
+      dispatch({ type: "ERROR", payload: err.message });
+    }
+  };
+
   // Return functions and state for component use
-  return { addDocument, response };
+  return { addDocument, response, likePost };
 };
