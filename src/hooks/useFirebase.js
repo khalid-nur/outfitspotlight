@@ -42,6 +42,15 @@ const firestoreReducer = (state, action) => {
         error: null,
       };
 
+    // When a user has been successfully followed or unfollowed
+    case "FOLLOW_DOCUMENT":
+      return {
+        isPending: false,
+        document: action.payload,
+        success: true,
+        error: null,
+      };
+
     // When an error occurs during Firestore operation
     case "ERROR":
       return {
@@ -86,6 +95,7 @@ export const useFirebase = (col) => {
 
   // Like Post function
   const likePost = async (userId, postId, liked) => {
+    dispatch({ type: "IS_PENDING" });
     // Create a document reference using user ID and post ID
     const docToLike = doc(ref, `${userId}_${postId}`);
     let likedPost;
@@ -112,6 +122,37 @@ export const useFirebase = (col) => {
     }
   };
 
+  // Follow User function
+  const followUser = async (currentUserId, postUserId, isFollowing) => {
+    dispatch({ type: "IS_PENDING" });
+    // Create a document reference using current user Id and post user Id
+    const docToFollow = doc(ref, `${currentUserId}_${postUserId}`);
+    let followUser;
+
+    try {
+      // Check if the user is already following
+      if (isFollowing) {
+        // If following, delete the document to unfollow
+        deleteDoc(docToFollow);
+      } else {
+        // If not following, create a document to represent following the user
+        followUser = await setDoc(docToFollow, {
+          currentUserId,
+          postUserId,
+        });
+      }
+
+      // Update the state with the result of the follow/unfollow action
+      dispatch({
+        type: "FOLLOW_DOCUMENT",
+        payload: followUser,
+      });
+    } catch (err) {
+      console.log(err);
+      dispatch({ type: "ERROR", payload: err.message });
+    }
+  };
+
   // Return functions and state for component use
-  return { addDocument, response, likePost };
+  return { addDocument, response, likePost, followUser };
 };
