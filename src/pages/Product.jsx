@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { RxDotFilled } from "react-icons/rx";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { HiOutlineHeart } from "react-icons/hi2";
 import DefaultAvatar from "../assets/signup-default-avatar.png";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCollection } from "../hooks/useCollection";
 import SkeletonProduct from "../components/Skeleton/SkeletonProduct";
 import { getCurrentTimeStamp } from "../helpers/useMoment";
+import LikeButton from "../components/LikeButton/LikeButton";
+import { useAuthContext } from "../hooks/useAuthContext";
+import FollowButton from "../components/FollowButton/FollowButton";
 
 function Product() {
   // Getting the 'id' parameter from the URL
   const { id } = useParams();
   const [currentProduct, setCurrentProduct] = useState(null);
   const { documents, isPending } = useCollection("posts");
+  const { user } = useAuthContext();
 
   console.log(id);
   console.log(documents);
@@ -56,17 +58,15 @@ function Product() {
                         </p>
                       </Link>
 
-                      <RxDotFilled
-                        className="hidden md:block dark:text-[#A8A8A8]"
-                        size={10}
-                      />
-                      <AiFillPlusCircle
-                        className=" cursor-pointer text-[#0095f6] md:hidden"
-                        size={20}
-                      />
-                      <p className=" hidden text-[#0095f6] hover:text-[#00376b]  font-semibold cursor-pointer hover:dark:text-[#e0f1ff] md:block">
-                        Follow
-                      </p>
+                      {currentProduct?.userId !== user.uid && (
+                        <>
+                          <RxDotFilled
+                            className="hidden md:block dark:text-[#A8A8A8]"
+                            size={10}
+                          />
+                          <FollowButton postUserId={currentProduct?.userId} />
+                        </>
+                      )}
                     </div>
                     <p className=" text-xs  md:text-sm text-[#71767b] dark:text-[#A8A8A8]">
                       {getCurrentTimeStamp(currentProduct?.timestamp)}
@@ -83,12 +83,7 @@ function Product() {
                 // alt="post"
                 className="w-full h-[585px] object-cover"
               />
-              <div className=" absolute bottom-4 right-4   bg-white/60 p-2.5 rounded-full md:p-2 ">
-                <HiOutlineHeart
-                  className=" stroke-black cursor-pointer hover:stroke-none hover:fill-gray-700"
-                  size={22}
-                />
-              </div>
+              <LikeButton postId={currentProduct?.id} />
             </div>
 
             <div className="mx-3 md:mx-0">

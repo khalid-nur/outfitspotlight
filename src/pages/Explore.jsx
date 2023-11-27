@@ -1,16 +1,19 @@
 import React from "react";
 import { RxDotFilled } from "react-icons/rx";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { HiOutlineHeart } from "react-icons/hi2";
 import { useCollection } from "../hooks/useCollection";
 import Skeleton from "../components/Skeleton/Skeleton";
 import { getCurrentTimeStamp } from "../helpers/useMoment";
 import { Link } from "react-router-dom";
 import DefaultAvatar from "../assets/signup-default-avatar.png";
-import { doc } from "firebase/firestore";
+import LikeButton from "../components/LikeButton/LikeButton";
+import FollowButton from "../components/FollowButton/FollowButton";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Explore = () => {
   const { documents, error, isPending } = useCollection("posts");
+  const { user } = useAuthContext();
+
+  console.log(user.uid);
 
   console.log(documents);
 
@@ -43,17 +46,16 @@ const Explore = () => {
                         {docs.username}
                       </p>
                     </Link>
-                    <RxDotFilled
-                      className="hidden md:block dark:text-[#A8A8A8]"
-                      size={10}
-                    />
-                    <AiFillPlusCircle
-                      className=" cursor-pointer text-[#0095f6] md:hidden"
-                      size={20}
-                    />
-                    <p className=" hidden text-[#0095f6] hover:text-[#00376b]  font-semibold cursor-pointer hover:dark:text-[#e0f1ff] md:block">
-                      Follow
-                    </p>
+
+                    {docs?.userId !== user.uid && (
+                      <>
+                        <RxDotFilled
+                          className="hidden md:block dark:text-[#A8A8A8]"
+                          size={10}
+                        />
+                        <FollowButton postUserId={docs.userId} />
+                      </>
+                    )}
                   </div>
                   <p className=" text-xs  md:text-sm text-[#71767b] dark:text-[#A8A8A8]">
                     {getCurrentTimeStamp(docs.timestamp)}
@@ -70,12 +72,7 @@ const Explore = () => {
                   alt="post"
                 />
               </Link>
-              <div className=" absolute bottom-4 right-4  bg-white/60 p-1 rounded-full md:p-2 ">
-                <HiOutlineHeart
-                  className=" stroke-black cursor-pointer hover:stroke-none hover:fill-gray-700"
-                  size={20}
-                />
-              </div>
+              <LikeButton postId={docs.id} />
             </div>
           </div>
         ))}
