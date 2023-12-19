@@ -70,6 +70,7 @@ export const useFirebase = (col) => {
 
   // Create a reference to a Firestore collection using 'col'
   const ref = collection(db, col);
+  const notificationCollection = collection(db, "notification");
 
   // function to add data to Firestore
   const addDocument = async (doc) => {
@@ -94,26 +95,57 @@ export const useFirebase = (col) => {
   };
 
   // Like Post function
-  const likePost = async (userId, postId, liked) => {
+  const likePost = async (
+    userId,
+    recipientUserId,
+    postId,
+    auth,
+    liked,
+    postData
+  ) => {
     dispatch({ type: "IS_PENDING" });
-    // Create a document reference using user ID and post ID
+
+    // Create document references for liking and notifications
     const docToLike = doc(ref, `${userId}_${postId}`);
-    let likedPost;
+    const docToNotify = doc(
+      notificationCollection,
+      `${recipientUserId}_${userId}_${postId}`
+    );
+
+    let notificationData;
 
     try {
-      // Check if the post is already liked
+      // If the post is already liked, delete the like and notification documents
       if (liked) {
-        // If liked, delete the document (unlike)
         await deleteDoc(docToLike);
+        await deleteDoc(docToNotify);
       } else {
-        // If not liked, create a document to represent liking the post
-        likedPost = await setDoc(docToLike, { userId, postId });
+        // If the post is not liked, create a new document for liking the post
+        await setDoc(docToLike, { userId, postId });
+
+        // Create a notification if the liker is not the same as the post owner
+        if (userId !== recipientUserId) {
+          notificationData = {
+            senderUserName: auth.displayName,
+            senderUserPhotoUrl: auth.photoURL,
+            recipientUserId: recipientUserId,
+            senderUserEmail: auth.email,
+            senderUserId: auth.uid,
+            type: "liked",
+            postId: postId,
+            postData: postData,
+            timestamp: serverTimestamp(),
+            isRead: false,
+          };
+          // Create the notification document and store it firebase
+          await setDoc(docToNotify, notificationData);
+        }
       }
 
-      // Update the state change with the new liked post
+      // Dispatching an action to update state with the result of the like/unlike action
       dispatch({
         type: "LIKED_DOCUMENT",
-        payload: likedPost,
+        payload: notificationData,
       });
     } catch (err) {
       console.log(err);
@@ -123,29 +155,51 @@ export const useFirebase = (col) => {
   };
 
   // Follow User function
-  const followUser = async (currentUserId, postUserId, isFollowing) => {
+  const followUser = async (currentUserId, postUserId, auth, isFollowing) => {
     dispatch({ type: "IS_PENDING" });
-    // Create a document reference using current user Id and post user Id
+
+    // Create document references for following a user and for notifications
     const docToFollow = doc(ref, `${currentUserId}_${postUserId}`);
-    let followUser;
+    const docToNotify = doc(
+      notificationCollection,
+      `${postUserId}_${currentUserId}`
+    );
+
+    let notificationData;
 
     try {
-      // Check if the user is already following
+      // If the user is already following, delete the follow document and notification
       if (isFollowing) {
-        // If following, delete the document to unfollow
-        deleteDoc(docToFollow);
+        await deleteDoc(docToFollow);
+        await deleteDoc(docToNotify);
       } else {
-        // If not following, create a document to represent following the user
-        followUser = await setDoc(docToFollow, {
+        // If the user is not following, create a new document to represent the follow action
+        await setDoc(docToFollow, {
           currentUserId,
           postUserId,
         });
+
+        // If the follower is different from the user being followed
+        if (currentUserId !== postUserId) {
+          notificationData = {
+            senderUserName: auth.displayName,
+            senderUserPhotoUrl: auth.photoURL,
+            recipientUserId: postUserId,
+            senderUserEmail: auth.email,
+            senderUserId: auth.uid,
+            type: "followed",
+            timestamp: serverTimestamp(),
+            isRead: false,
+          };
+          // Create a notification document in Firestore
+          await setDoc(docToNotify, notificationData);
+        }
       }
 
-      // Update the state with the result of the follow/unfollow action
+      // Dispatching an action to update the state with the follow/unfollow result
       dispatch({
         type: "FOLLOW_DOCUMENT",
-        payload: followUser,
+        payload: notificationData,
       });
     } catch (err) {
       console.log(err);
