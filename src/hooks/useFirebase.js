@@ -7,6 +7,7 @@ import {
   setDoc,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 // Set initial state for the firestoreReducer
@@ -44,6 +45,15 @@ const firestoreReducer = (state, action) => {
 
     // When a user has been successfully followed or unfollowed
     case "FOLLOW_DOCUMENT":
+      return {
+        isPending: false,
+        document: action.payload,
+        success: true,
+        error: null,
+      };
+
+    // When a notification has been successfully read
+    case "READ_NOTIFICATION":
       return {
         isPending: false,
         document: action.payload,
@@ -207,6 +217,28 @@ export const useFirebase = (col) => {
     }
   };
 
+  // Read notification
+  const readNotification = async (id) => {
+    dispatch({ type: "IS_PENDING" });
+
+    try {
+      // Create a reference to a specific notification in the database using its id.
+      const docToUpdate = doc(notificationCollection, id);
+
+      // Update the notification in the database to mark it as read.
+      await updateDoc(docToUpdate, { isRead: true });
+
+      // Dispatching an action to update the state, indicating the notification has been read
+      dispatch({
+        type: "READ_NOTIFICATION",
+        payload: docToUpdate,
+      });
+    } catch (err) {
+      // Handle error and update state
+      dispatch({ type: "ERROR", payload: err.message });
+    }
+  };
+
   // Return functions and state for component use
-  return { addDocument, response, likePost, followUser };
+  return { addDocument, response, likePost, followUser, readNotification };
 };
