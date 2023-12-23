@@ -6,7 +6,10 @@ import moment from "moment";
 import { useFirebase } from "../hooks/useFirebase";
 
 const Notification = () => {
-  const { documents: notificationDocs } = useCollection("notification");
+  const { documents: notificationDocs } = useCollection(
+    "notification",
+    "timestamp"
+  );
   const { user } = useAuthContext();
   const [userNotifications, setUserNotifications] = useState(null);
   const { readNotification } = useFirebase("notification");
@@ -57,7 +60,7 @@ const Notification = () => {
 
   return (
     <div className="container max-w-5xl mx-auto flex flex-col items-center justify-center dark:bg-black ">
-      <div className="flex flex-col justify-center mt-8 w-full max-w-3xl px-3 dark:border-[#262626]">
+      <div className="flex flex-col justify-center mt-8 w-full max-w-3xl  dark:border-[#262626]">
         {userNotifications?.map(
           (userNotification) =>
             !userNotification.isRead && (

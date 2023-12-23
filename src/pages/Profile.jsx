@@ -16,11 +16,12 @@ function Profile() {
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-  const [postCount, setPostCount] = useState(0);
+  const [userPosts, setUserPosts] = useState([]);
+
   const { user } = useAuthContext();
   // Fetching users, posts, and follows data
   const { documents: userDocs, isPending } = useCollection("users");
-  const { documents: postDocs } = useCollection("posts");
+  const { documents: postDocs } = useCollection("posts", "timestamp");
   const { documents: followDocs } = useCollection("follows");
 
   // Get the 'id' parameter from the URL (this should have id of the users Id for URL)
@@ -39,17 +40,17 @@ function Profile() {
     );
     // Filtering to find posts made by the current user.
     const userPosts = postDocs?.filter((post) => post.userId === id);
-    console.log(userPosts);
 
     setCurrentUserProfile(currentProfile); // Updating the 'currentUserProfile' state by setting the current user's profile.
     setFollowingCount(userFollowing?.length); // Setting the number of users the current user is following.
-    setFollowerCount(userFollowers?.length); // Setting the number of followers of the current user.
-    setPostCount(userPosts?.length); // Setting the number of posts by the current user
+    setFollowerCount(userFollowers?.length); // Setting the number of followers of the current user
+    setUserPosts(userPosts); // Updating the state with posts made by the current user
   }, [userDocs, id, followDocs]);
 
   console.log("following: " + followingCount);
   console.log("followers: " + followerCount);
-  console.log("post: " + postCount);
+
+  console.log(userPosts?.[0]);
 
   if (isPending) {
     return <SkeletonProfile />;
@@ -69,7 +70,7 @@ function Profile() {
             <div className=" hidden items-center gap-6 md:flex">
               <div className="flex flex-col items-center text-center">
                 <span className=" text-lg font-semibold dark:text-[#f5f5f5]">
-                  {postCount}
+                  {userPosts?.length}
                 </span>
                 <span className=" text-lg  text-gray-700 dark:text-[#f5f5f5]">
                   Post
@@ -95,7 +96,7 @@ function Profile() {
             {user.uid === id ? (
               <EditProfile />
             ) : (
-              <FollowButton postUserId={id} />
+              <FollowButton postData={userPosts?.[0]} />
             )}
           </div>
 
@@ -152,7 +153,9 @@ function Profile() {
           {/* <!-- Tabs --> */}
           <div className="mt-3 flex justify-evenly md:hidden">
             <div className="flex flex-col w-full cursor-pointer items-center justify-center p-2 transition dark:text-[#f5f5f5] ">
-              <span className=" text-lg font-semibold">{postCount}</span>
+              <span className=" text-lg font-semibold">
+                {userPosts?.length}
+              </span>
               <span className=" text-lg dark:text-[#f5f5f5] ">Post</span>
             </div>
             <div className="flex flex-col w-full cursor-pointer items-center justify-center  dark:text-[#f5f5f5]  ">
