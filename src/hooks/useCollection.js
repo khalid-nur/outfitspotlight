@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { db } from "../firebase/firebaseConfig";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 
-export const useCollection = (col, orderByField = null) => {
+export const useCollection = (col, orderByField = null, sortBy = null) => {
   const [documents, setDocuments] = useState(null);
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
@@ -15,9 +15,9 @@ export const useCollection = (col, orderByField = null) => {
     let ref = collection(db, col);
 
     // Check if orderByField is provided. If it is, create a query that orders
-    // the documents by the specified field in descending order
+    // the documents by the specified field in descending or ascending order
     // If orderByField is not provided use default collection without any sorting
-    const q = orderByField ? query(ref, orderBy(orderByField, "desc")) : ref;
+    const q = orderByField ? query(ref, orderBy(orderByField, sortBy)) : ref;
 
     // Set up a snapshot listener to react to changes in the Firestore collection
     const unsubscribe = onSnapshot(
