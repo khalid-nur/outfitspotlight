@@ -8,7 +8,8 @@ import { useFirebase } from "../hooks/useFirebase";
 const Notification = () => {
   const { documents: notificationDocs } = useCollection(
     "notification",
-    "timestamp"
+    "timestamp",
+    "desc"
   );
   const { user } = useAuthContext();
   const [userNotifications, setUserNotifications] = useState(null);
@@ -32,10 +33,15 @@ const Notification = () => {
     (notification) => notification.isRead
   );
 
+  // Mark a notification as read
+  const readNotificationsHandler = (id) => {
+    readNotification(id);
+  };
+
   // If all notifications are read, display a message indicating so
   if (allNotificationsRead)
     return (
-      <div className="container max-w-5xl mx-auto flex-col items-center justify-center flex h-screen md:h-96 dark:bg-black ">
+      <div className="container max-w-5xl mx-auto flex-col items-center justify-center flex h-[calc(100vh-70px)] overflow-hidden md:h-96 dark:bg-black ">
         <div className="flex flex-col justify-center w-full max-w-md h-[116px] dark:text-white">
           <div className="flex flex-col items-center">
             <h2 className="text-4xl font-semibold">Nothing to see here yet</h2>
@@ -47,56 +53,56 @@ const Notification = () => {
       </div>
     );
 
-  // Mark a notification as read
-  const readNotificationsHandler = (id) => {
-    readNotification(id);
+  // Defining the messages for each notification type and displaying the appropriate message for each type
+  const notificationMessages = (notification) => {
+    switch (notification.type) {
+      case "liked":
+        return "liked your post";
+      case "followed":
+        return "started following you";
+      case "commented":
+        return `commented: ${notification.commentData} on your post`;
+    }
   };
 
-  // Defining the messages for each notification type
-  const notificationMessages = {
-    liked: "liked your post",
-    followed: "started following you",
-  };
+  console.log(notificationDocs);
 
   return (
     <div className="container max-w-5xl mx-auto flex flex-col items-center justify-center dark:bg-black ">
-      <div className="flex flex-col justify-center mt-8 w-full max-w-3xl  dark:border-[#262626]">
+      <div className="flex flex-col justify-center mt-8 w-full max-w-3xl   ">
         {userNotifications?.map(
           (userNotification) =>
             !userNotification.isRead && (
               <div
                 key={userNotification.id}
-                className="flex items-center justify-between mb-2 border-b-[1px] border-[#DBDBDB] px-2 py-1 cursor-pointer hover:bg-[#efefef] dark:hover:bg-[#121212]"
-                onClick={() => readNotificationsHandler(userNotification.id)}
+                className="flex items-start gap-2  mb-2 border-b-[1px] border-[#DBDBDB] px-2 py-1 cursor-pointer hover:bg-[#efefef] dark:hover:bg-[#262626]  "
               >
-                <div className="flex items-center mb-2 ">
-                  <img
-                    src={userNotification.senderUserPhotoUrl ?? DefaultAvatar}
-                    alt="icon"
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <div className="flex flex-col items-start justify-center ml-2">
-                    <div className="flex items-center gap-1">
-                      <p className="text-base font-semibold cursor-pointer dark:text-white">
-                        {userNotification.senderUserName}
-                      </p>
-                      <span className="font-normal dark:text-white">
-                        {notificationMessages[userNotification.type]}
-                      </span>
-                    </div>
-                    <p className="text-sm text-[#71767b] md:text-sm dark:text-[#A8A8A8]">
-                      {moment
-                        .unix(userNotification?.timestamp?.seconds)
-                        .format("llll")}
-                    </p>
-                  </div>
+                <img
+                  className="w-12 h-12 object-cover rounded-full"
+                  src={userNotification.senderUserPhotoUrl ?? DefaultAvatar}
+                  alt=""
+                />
+
+                <div class="break-words w-full">
+                  <span class="text-base font-semibold cursor-pointer dark:text-white">
+                    {userNotification.senderUserName}
+                  </span>
+                  <p class="break-all inline ml-1 dark:text-white ">
+                    {notificationMessages(userNotification)}
+                  </p>
+                  <p className="text-sm text-[#71767b] mt-1 md:text-sm dark:text-[#A8A8A8]">
+                    {moment
+                      .unix(userNotification?.timestamp?.seconds)
+                      .format("llll")}
+                  </p>
                 </div>
+
                 {userNotification.postData && (
-                  <div className="flex items-center justify-end mb-2 dark:text-white">
+                  <div className=" w-20 h-20 md:w-24 md:h-24 ">
                     <img
                       src={userNotification.postData}
                       alt="icon"
-                      className="w-16 h-16 md:w-20 md:h-20 object-cover"
+                      className=" w-full h-full object-cover"
                     />
                   </div>
                 )}
