@@ -61,6 +61,18 @@ const firestoreReducer = (state, action) => {
         error: null,
       };
 
+    // When a comment has been successfully posted
+    case "POST_COMMENT":
+      return {
+        isPending: false,
+        document: {
+          comment: action.payload.addedComment,
+          notification: action.payload.notificationData,
+        },
+        success: true,
+        error: null,
+      };
+
     // When an error occurs during Firestore operation
     case "ERROR":
       return {
@@ -217,6 +229,61 @@ export const useFirebase = (col) => {
     }
   };
 
+  // Post Comments function
+  const postComment = async (
+    userId,
+    recipientUserId,
+    postId,
+    auth,
+    comment,
+    postData
+  ) => {
+    dispatch({ type: "IS_PENDING" });
+
+    try {
+      // Add the comment to the Firestore database
+      const addedComment = await addDoc(ref, {
+        userId,
+        postId,
+        comment,
+        senderUserName: auth.displayName,
+        senderUserPhotoUrl: auth.photoURL,
+        timeStamp: serverTimestamp(),
+      });
+
+      const notificationRef = doc(notificationCollection, crypto.randomUUID());
+
+      let notificationData;
+
+      // Check if the user commenting is not the same as the post's recipient
+      if (userId !== recipientUserId) {
+        notificationData = {
+          senderUserName: auth.displayName,
+          senderUserPhotoUrl: auth.photoURL,
+          recipientUserId: recipientUserId,
+          senderUserId: auth.uid,
+          type: "commented",
+          postId: postId,
+          commentData: comment,
+          postData: postData,
+          timestamp: serverTimestamp(),
+          isRead: false,
+        };
+
+        // Save the notification data in Firestore notifications collection
+        await setDoc(notificationRef, notificationData);
+      }
+
+      // Dispatch success action with the new comment and notification data
+      dispatch({
+        type: "POST_COMMENT",
+        payload: { addedComment, notificationData },
+      });
+    } catch (err) {
+      dispatch({ type: "ERROR", payload: err.message });
+    }
+  };
+
   // Read notification
   const readNotification = async (id) => {
     dispatch({ type: "IS_PENDING" });
@@ -240,5 +307,12 @@ export const useFirebase = (col) => {
   };
 
   // Return functions and state for component use
-  return { addDocument, response, likePost, followUser, readNotification };
+  return {
+    addDocument,
+    response,
+    likePost,
+    followUser,
+    readNotification,
+    postComment,
+  };
 };
