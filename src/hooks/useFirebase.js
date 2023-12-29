@@ -73,6 +73,15 @@ const firestoreReducer = (state, action) => {
         error: null,
       };
 
+    // When a post has been successfully been deleted
+    case "DELETED_DOCUMENT":
+      return {
+        isPending: false,
+        document: null,
+        success: true,
+        error: null,
+      };
+
     // When an error occurs during Firestore operation
     case "ERROR":
       return {
@@ -306,6 +315,27 @@ export const useFirebase = (col) => {
     }
   };
 
+  // Delete a Post Function
+  const deletePost = async (postId) => {
+    dispatch({ type: "IS_PENDING" });
+
+    try {
+      // Creating a reference to the specific document in the Firestore database using the provided postId
+      const docRef = doc(db, col, postId);
+
+      // Deleting the document from database using the postId reference
+      await deleteDoc(docRef);
+
+      // Dispatching an action to update the state indicating the document has been deleted
+      dispatch({
+        type: "DELETED_DOCUMENT",
+        payload: deleteDoc,
+      });
+    } catch (err) {
+      dispatch({ type: "ERROR", payload: err.message });
+    }
+  };
+
   // Return functions and state for component use
   return {
     addDocument,
@@ -314,5 +344,6 @@ export const useFirebase = (col) => {
     followUser,
     readNotification,
     postComment,
+    deletePost,
   };
 };
