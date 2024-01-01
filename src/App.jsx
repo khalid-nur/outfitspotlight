@@ -10,6 +10,9 @@ import HomeLayout from "./Layouts/HomeLayout";
 import ExploreLayout from "./Layouts/ExploreLayout";
 import ProfileLayout from "./Layouts/ProfileLayout";
 import ProductLayout from "./Layouts/ProductLayout";
+import NotificationLayout from "./Layouts/NotificationLayout";
+import NoPageFound from "./pages/404";
+import Home from "./pages/Home";
 
 const App = () => {
   const { authIsReady, user } = useAuthContext();
@@ -57,6 +60,19 @@ const App = () => {
               element={user ? <ProductLayout /> : <Navigate to="/" />}
               // If a user is logged in, direct them to the user's product page.
               // Otherwise, redirect to the Login page.
+            />
+
+            <Route
+              path="/notification"
+              element={user ? <NotificationLayout /> : <Navigate to="/" />}
+              // If a user is logged in, direct them to the user's notification page.
+              // Otherwise, redirect to the Login page.
+            />
+
+            <Route
+              path="*"
+              element={user ? <NoPageFound /> : <Navigate to="/" />}
+              // If any unmatched URL path and a user is logged in, display a 404 page otherwise, navigate to the login page.
             />
           </Routes>
         </BrowserRouter>
