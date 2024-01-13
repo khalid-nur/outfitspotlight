@@ -13,9 +13,6 @@ const Comments = ({ postId }) => {
     "asc"
   );
 
-  //   console.log(commentDocs);
-  //   console.log(postId);
-
   useEffect(() => {
     // Filtering the comments that belong to the current post
     const postComments = commentDocs?.filter(
@@ -25,10 +22,6 @@ const Comments = ({ postId }) => {
     // Updating the state with the filtered comments
     setCommentList(postComments);
   }, [commentDocs]);
-
-  console.log(commentList);
-
-  console.log(showComments);
 
   return (
     <>
@@ -42,7 +35,7 @@ const Comments = ({ postId }) => {
               <img
                 className="w-8 h-8 object-cover rounded-full"
                 src={comment.senderUserPhotoUrl ?? DefaultAvatar}
-                alt=""
+                alt={`${comment.senderUserName} profile picture`}
               />
               <div className="comment-content break-words flex-wrap">
                 <span className="text-base font-semibold cursor-pointer dark:text-white">

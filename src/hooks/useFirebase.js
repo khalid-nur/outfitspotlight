@@ -179,7 +179,6 @@ export const useFirebase = (col) => {
         payload: notificationData,
       });
     } catch (err) {
-      console.log(err);
       // Dispatch an error
       dispatch({ type: "ERROR", payload: err.message });
     }
@@ -233,7 +232,6 @@ export const useFirebase = (col) => {
         payload: notificationData,
       });
     } catch (err) {
-      console.log(err);
       dispatch({ type: "ERROR", payload: err.message });
     }
   };

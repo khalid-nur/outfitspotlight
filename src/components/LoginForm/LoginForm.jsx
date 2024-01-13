@@ -16,8 +16,6 @@ const LoginForm = () => {
     e.preventDefault();
 
     login(email, password);
-    console.log(email);
-    console.log(password);
   };
 
   return (

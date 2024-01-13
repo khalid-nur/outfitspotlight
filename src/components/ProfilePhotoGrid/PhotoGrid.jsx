@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LikeButton from "../LikeButton/LikeButton";
+import { FiCameraOff } from "react-icons/fi";
+import PostOptionsButton from "../PostOptionsButton/PostOptionsButton";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const PhotoGrid = ({ userPhotoDocs }) => {
-  const location = useLocation();
   // State to hold user photos
   const [userPhotos, setUserPhotos] = useState(null);
   // Get the id parameter from the URL (This should contain the user ID obtained from the URL)
   const { id } = useParams();
+
+  const { user } = useAuthContext();
 
   // Filter and update user photos based on id
   useEffect(() => {
@@ -21,6 +26,19 @@ const PhotoGrid = ({ userPhotoDocs }) => {
     return () => {};
   }, [userPhotoDocs, id]);
 
+  // Display message if there are no posts
+  if (userPhotos?.length == 0) {
+    return (
+      <>
+        <div></div>
+        <div className="h-[calc(100vh-435px)] flex flex-col justify-center items-center dark:text-white ">
+          <FiCameraOff size={55} />
+          <p className=" mt-2 text-2xl md:text-3xl font-medium">No Post Yet</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       {/* render user photos */}
@@ -29,13 +47,21 @@ const PhotoGrid = ({ userPhotoDocs }) => {
           key={userPhoto.id}
           className=" relative cursor-pointer  bg-[#efefef] w-full lg:w-[300px] h-48 md:h-[338px]"
         >
-          <img
-            className="w-full h-full object-cover"
-            src={userPhoto?.postImg}
-          />
-          <div className=" absolute top-0 left-0 w-full h-full opacity-0 hover:bg-black/50 hover:opacity-100 ">
-            <LikeButton postId={userPhoto.id} />
-          </div>
+          {user.uid === id && (
+            <div className="absolute top-0 right-4 md:p-2 ">
+              <PostOptionsButton postData={userPhoto} />
+            </div>
+          )}
+
+          <Link to={`/product/${userPhoto.id}`}>
+            <img
+              className=" w-full h-full object-cover -z-10"
+              src={userPhoto?.postImg}
+              alt={`${userPhoto.username} post picture`}
+            />
+          </Link>
+
+          <LikeButton postData={userPhoto} />
         </div>
       ))}
     </>

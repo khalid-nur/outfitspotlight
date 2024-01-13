@@ -5,8 +5,9 @@ import { useFirebase } from "../../hooks/useFirebase";
 import { useCollection } from "../../hooks/useCollection";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IoCheckmarkCircle } from "react-icons/io5";
+import { SlUserUnfollow } from "react-icons/sl";
 
-const FollowButton = ({ postUserId }) => {
+const FollowButton = ({ postData }) => {
   const location = useLocation();
   // State to track if the current user is following
   const [isFollowing, setIsFollowing] = useState(false);
@@ -18,7 +19,7 @@ const FollowButton = ({ postUserId }) => {
   useEffect(() => {
     // Filter the follows data to find follows related to the current post
     const postFollows = follows?.filter(
-      (follow) => follow.postUserId === postUserId
+      (follow) => follow.postUserId === postData?.userId
     );
     // Check if the current user is already following the post's user by checking if their ID is in the list of users who follow the post
     const isUserFollowing = postFollows?.some(
@@ -28,11 +29,29 @@ const FollowButton = ({ postUserId }) => {
     setIsFollowing(isUserFollowing);
 
     return () => {};
-  }, [follows, postUserId, currentUserId, isFollowing]);
+  }, [follows, postData?.userId, currentUserId, isFollowing]);
 
   const followHandler = () => {
-    followUser(currentUserId, postUserId, isFollowing);
+    followUser(currentUserId, postData.userId, user, isFollowing);
   };
+
+  if (location.pathname.includes("home")) {
+    if (isFollowing) {
+      return (
+        <>
+          <button
+            className=" flex items-center gap-1 text-sm  font-medium dark:text-white"
+            onClick={followHandler}
+          >
+            <SlUserUnfollow />
+            Unfollow
+          </button>
+        </>
+      );
+    } else {
+      return null;
+    }
+  }
 
   if (location.pathname.includes("profile")) {
     if (isFollowing) {

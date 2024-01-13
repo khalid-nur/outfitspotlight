@@ -7,3 +7,23 @@
 body {
   font-family: "Source Sans 3", sans-serif;
 }
+
+.ant-dropdown {
+  @apply z-10;
+}
+
+.ant-modal-content {
+  @apply dark:bg-[#262626];
+}
+
+.ant-modal-title {
+  @apply dark:bg-[#262626];
+}
+
+.ant-modal-close-x {
+  @apply dark:text-white;
+}
+
+.ant-dropdown-menu {
+  @apply dark:bg-[#262626];
+}

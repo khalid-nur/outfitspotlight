@@ -27,11 +27,9 @@ export const useLogin = () => {
         setIsPending(false); // Set pending state to false after successful login
       }
     } catch (err) {
-      // Check if the component is not unmounted before updating state
-      if (!isCancelled) {
-        setError(err.message); // Set the error state with the error message
-        setIsPending(false);
-      }
+      setError(err.message); // Set the error state with the error message
+      setIsPending(false);
+      // }
     }
   };
 

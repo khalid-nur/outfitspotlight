@@ -43,6 +43,7 @@ const Navbar = () => {
           <img
             src={MainLogo}
             className="mr-4 w-20 h-9 hidden md:block md:h-10 md:w-[108px] rounded-md"
+            alt="outfitspotlight logo"
           />
           <div className="hidden relative md:block">
             <SearchBar />
@@ -94,8 +95,9 @@ const Navbar = () => {
 
             <div className="  w-11 h-11  md:w-14 md:h-14 flex justify-center items-center rounded-full bg-[#efefef] text-xl text-white cursor-pointer ">
               <img
-                className="  w-full h-full rounded-full"
+                className="  w-full h-full object-cover rounded-full"
                 src={user?.photoURL ?? DefaultAvatar}
+                alt={`${user?.displayName} profile picture`}
                 onClick={displayPopup}
               />
             </div>

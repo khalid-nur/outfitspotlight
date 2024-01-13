@@ -23,7 +23,6 @@ export const useDocument = (col, id) => {
         setError(null); // Clear any previous error messages
       },
       (err) => {
-        console.log(err);
         setError("Could not fetch the data");
         setIsPending(false); // Loading is complete
       }

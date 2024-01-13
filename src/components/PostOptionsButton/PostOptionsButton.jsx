@@ -18,7 +18,7 @@ const PostOptionsButton = ({ postData }) => {
       // Show delete option only if the post belongs to the current user
       label: postData.userId === user.uid && (
         <p
-          className=" flex items-center  gap-1  text-red-500 text-sm  font-medium"
+          className=" flex items-center  gap-1  text-red-500 text-xs font-medium"
           onClick={deleteHandler}
         >
           <FaRegTrashAlt />
@@ -28,7 +28,9 @@ const PostOptionsButton = ({ postData }) => {
       key: "0",
     },
     {
-      label: <FollowButton postData={postData} />,
+      label: postData.userId !== user.uid && (
+        <FollowButton postData={postData} />
+      ),
       key: "1",
     },
   ];

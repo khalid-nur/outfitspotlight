@@ -154,9 +154,6 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
   // Handling submission of the parent modal form
   const handleParentModalSubmit = async (e) => {
     e.preventDefault();
-    console.log("Parent Input Text:", parentInputText);
-    console.log("Parent Input File:", parentInputFile);
-    console.log("Nested Values:", nestedValues);
 
     // Set loading state
     setLoading(true);
@@ -206,7 +203,6 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
     const post = {
       status: parentInputText, // Set the status text from parent input
       timestamp: serverTimestamp(), // Get the current server timestamp
-      comments: [], // Initialize comments array
       username: user.displayName, // Set username from user's display name
       photoURL: user.photoURL, // Set photo URL from user's profile
       userId: user.uid, // Set user ID
@@ -219,14 +215,10 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
       setLoading(false); // Set loading state to false
       addDocument(post); // Add the post document to Firestore
     }, 2000);
-
-    console.log(post);
   };
 
   //   handle the response and reset the parent modal
   useEffect(() => {
-    console.log(response);
-
     // If the operation was successful in the response
     if (response.success) {
       hideParentModal(); // If successful, hide the parent modal / reset the parent modal
@@ -262,6 +254,7 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
             <div className="flex justify-end">
               {/* , // Button to open the nested modal */}
               <Button
+                className="dark:text-white"
                 ref={addProductsButtonRef}
                 key="nestedModal"
                 onClick={showNestedModal}
@@ -272,7 +265,7 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
               <Button
                 key="submit"
                 type="primary"
-                className="bg-[#3F96FE] text-white py-1 px-4 ml-1 border  transition-none rounded-md"
+                className="bg-[#3F96FE] text-white py-1 px-4 ml-1 border  transition-none rounded-md dark:text-white"
                 onClick={handleParentModalSubmit}
                 disabled={parentInputFile ? false : true}
               >
@@ -286,7 +279,7 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
 
         {/* Textarea for entering parent input */}
         <textarea
-          className=" mt-4 h-32 w-full outline-none resize-none text-base"
+          className=" mt-4 h-32 w-full outline-none resize-none text-base dark:bg-[#262626] dark:text-white"
           value={parentInputText}
           onChange={handleParentInputTextChange}
           placeholder="Create a post"
@@ -328,6 +321,7 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
         onCancel={hideNestedModal}
         footer={[
           <Button
+            className=" dark:text-white"
             key="add"
             type="default"
             ref={addNewItemButtonRef}
@@ -348,12 +342,14 @@ const PostFeedModal = ({ isModalVisible, setModalVisible }) => {
         <TourInfo refs={refs} stepSet={2} />
 
         <div className=" h-60 max-h-60 mt-2 overflow-y-auto overflow-x-hidden snap-y">
-          <h3 className="mb-2 text-sm font-medium">Products Items:</h3>
+          <h3 className="mb-2 text-sm font-medium dark:text-white">
+            Products Items:
+          </h3>
           {/* Mapping through the array of nested values */}
           {nestedValues?.map((nestedValue, index) => (
             <div className="relative mt-3 " key={index}>
               <input
-                className=" snap-start w-full py-1 px-2 rounded-md border focus:outline-none border-black/30 "
+                className=" snap-start w-full py-1 px-2 rounded-md border focus:outline-none border-black/30 dark:text-white dark:bg-[#4a4a4a]"
                 type="url"
                 value={nestedValue.nestedInputText}
                 ref={insertUrlRef}

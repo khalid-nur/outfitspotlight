@@ -36,7 +36,6 @@ export const useCollection = (col, orderByField = null, sortBy = null) => {
         setDocuments(results); // Update the documents state with fetched data
       },
       (error) => {
-        console.log(error);
         setError("Could not fetch the data");
       }
     );

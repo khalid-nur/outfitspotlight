@@ -3,8 +3,10 @@ import { HiOutlineHeart, HiMiniHeart } from "react-icons/hi2";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useFirebase } from "../../hooks/useFirebase";
 import { useCollection } from "../../hooks/useCollection";
+import { SlUserUnfollow } from "react-icons/sl";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
-const LikeButton = ({ postId }) => {
+const LikeButton = ({ postData }) => {
   // Tracking if the current post is liked by the user
   const [liked, setIsLiked] = useState(false);
   const { user } = useAuthContext();
@@ -15,7 +17,7 @@ const LikeButton = ({ postId }) => {
   // Update the liked state based on the likes collection
   useEffect(() => {
     // Filter likes related to this post
-    const postLikes = likes?.filter((like) => like?.postId === postId);
+    const postLikes = likes?.filter((like) => like?.postId === postData.id);
     // Check if current user liked this post
     const userLiked = postLikes?.some((like) => like.userId === currentUserId);
 
@@ -23,12 +25,27 @@ const LikeButton = ({ postId }) => {
     setIsLiked(userLiked);
 
     return () => {};
-  }, [likes, postId, currentUserId]);
+  }, [likes, postData?.id, currentUserId]);
 
   const likeHandler = () => {
-    likePost(user.uid, postId, liked);
-    console.log(currentUserId, postId, liked);
+    likePost(
+      user.uid,
+      postData.userId,
+      postData.id,
+      user,
+      liked,
+      postData.postImg
+    );
   };
+
+  if (location.pathname.includes("home")) {
+    if (!liked) {
+      return <AiOutlineHeart size={25} onClick={likeHandler} />;
+    } else {
+      return <AiFillHeart size={25} onClick={likeHandler} />;
+    }
+  }
+
   return (
     <>
       <div

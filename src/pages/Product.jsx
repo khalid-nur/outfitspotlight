@@ -17,10 +17,6 @@ function Product() {
   const { documents, isPending } = useCollection("posts");
   const { user } = useAuthContext();
 
-  console.log(id);
-  console.log(documents);
-  console.log(currentProduct);
-  console.log(currentProduct?.product);
   useEffect(() => {
     // Filter the posts documents to find the product with the matching id
     const selectedProduct = documents?.filter(
@@ -29,10 +25,9 @@ function Product() {
 
     // Update the state with the selected product
     setCurrentProduct(selectedProduct?.[0]);
-    return () => {};
   }, [documents, id]);
 
-  // Display a skeleton layout while the page is loading
+  // Display a skeleton layout while the page is loadings
   if (isPending) {
     return <SkeletonProduct />;
   }
@@ -47,8 +42,8 @@ function Product() {
                 <div className="flex items-center ">
                   <img
                     src={currentProduct?.photoURL ?? DefaultAvatar}
-                    alt="icon"
-                    className="w-12 h-12 rounded-full bg-[#efefef]"
+                    alt={`${currentProduct?.username} profile picture`}
+                    className="w-12 h-12 object-cover rounded-full bg-[#efefef]"
                   />
                   <div className="flex flex-col w-4/5 ml-2 md:w-fit ">
                     <div className="flex items-center justify-between">
@@ -64,7 +59,7 @@ function Product() {
                             className="hidden md:block dark:text-[#A8A8A8]"
                             size={10}
                           />
-                          <FollowButton postUserId={currentProduct?.userId} />
+                          <FollowButton postData={currentProduct} />
                         </>
                       )}
                     </div>
@@ -80,10 +75,10 @@ function Product() {
             <div className=" relative  bg-[#efefef] dark:border-[#262626] mb-2">
               <img
                 src={currentProduct?.postImg}
-                // alt="post"
+                alt={`${currentProduct?.username} post picture`}
                 className="w-full h-[585px] object-cover"
               />
-              <LikeButton postId={currentProduct?.id} />
+              <LikeButton postData={currentProduct} />
             </div>
 
             <div className="mx-3 md:mx-0">
@@ -112,6 +107,7 @@ function Product() {
                     <img
                       className="w-full h-full object-cover bg-[#efefef] rounded-md "
                       src={productItem?.nestedInputFileUrl}
+                      alt={`${currentProduct?.username} product item image`}
                     />
                   </a>
                 </div>

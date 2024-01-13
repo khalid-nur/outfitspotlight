@@ -21,7 +21,7 @@ function Profile() {
   const { user } = useAuthContext();
   // Fetching users, posts, and follows data
   const { documents: userDocs, isPending } = useCollection("users");
-  const { documents: postDocs } = useCollection("posts", "timestamp");
+  const { documents: postDocs } = useCollection("posts", "timestamp", "desc");
   const { documents: followDocs } = useCollection("follows");
 
   // Get the 'id' parameter from the URL (this should have id of the users Id for URL)
@@ -47,11 +47,6 @@ function Profile() {
     setUserPosts(userPosts); // Updating the state with posts made by the current user
   }, [userDocs, id, followDocs]);
 
-  console.log("following: " + followingCount);
-  console.log("followers: " + followerCount);
-
-  console.log(userPosts?.[0]);
-
   if (isPending) {
     return <SkeletonProfile />;
   }
@@ -63,8 +58,9 @@ function Profile() {
           {/* <!-- Profile picture and edit button --> */}
           <div className="flex items-center justify-between px-4 py-3">
             <img
-              className="h-32 w-32 md:h-44 md:w-44 cursor-pointer rounded-full  bg-[#efefef]"
+              className="h-32 w-32 md:h-44 md:w-44 rounded-full object-cover bg-[#efefef]"
               src={currentUserProfile?.photoURL ?? DefaultAvatar}
+              alt={`${currentUserProfile?.username} profile picture`}
             />
 
             <div className=" hidden items-center gap-6 md:flex">

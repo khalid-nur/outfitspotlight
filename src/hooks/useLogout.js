@@ -22,7 +22,6 @@ export const useLogout = () => {
       setError(null); // Clear any error messages
       setIsPending(false); // Set pending state to false after successful logout
     } catch (err) {
-      console.log(err.message);
       setError(err.message); // Set the error state with the error message
       setIsPending(false); // Set pending state to false after a failed logout attempt
     }

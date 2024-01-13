@@ -4,10 +4,10 @@ import Post from "../components/Post/Post";
 
 const Home = () => {
   return (
-    <div>
+    <>
       <PostFeed />
       <Post />
-    </div>
+    </>
   );
 };
 

@@ -34,10 +34,7 @@ const SearchBar = () => {
       setSearchInput("");
     }, 100);
   };
-  console.log(showDropdown);
-  console.log(userDocs);
-  console.log(searchResults);
-  console.log(searchInput.length);
+
   return (
     <>
       <label className="md:block">
@@ -65,9 +62,9 @@ const SearchBar = () => {
                     >
                       <span className="flex items-center gap-1">
                         <img
-                          className="h-10 w-10 rounded-full"
+                          className="h-10 w-10 object-cover rounded-full"
                           src={searchResult?.photoURL ?? DefaultAvatar}
-                          alt=""
+                          alt={`${searchResult?.username} profile picture`}
                         />
                         {searchResult.username}
                       </span>

@@ -13,6 +13,7 @@ import { updateProfile } from "firebase/auth";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useDocument } from "../../hooks/useDocument";
+import DefaultAvatar from "../../assets/signup-default-avatar.png";
 
 const EditProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,10 +27,7 @@ const EditProfile = () => {
   // Get the current user and user document using custom hooks
   const { user } = useAuthContext();
   const { document: userDoc } = useDocument("users", user.uid);
-
-  console.log(userDoc);
-  console.log(auth.currentUser);
-  console.log(user.uid);
+  const { document: userDocs } = useDocument("posts", user.uid);
 
   // Open the profile editor modal
   const openProfileEditor = () => {
@@ -52,7 +50,7 @@ const EditProfile = () => {
   };
 
   // Update current logged in user display name
-  const updateUserProfile = async () => {
+  const updateUserDisplayName = async () => {
     // Update user profile
     await updateProfile(auth.currentUser, { displayName: username });
   };
@@ -78,8 +76,6 @@ const EditProfile = () => {
       where("userId", "==", user.uid)
     );
     const postQuerySnapshot = await getDocs(postQuery);
-
-    console.log(postQuerySnapshot);
 
     // Update all post documents usernames
     postQuerySnapshot.forEach(async (postDoc) => {
@@ -126,11 +122,8 @@ const EditProfile = () => {
 
     // Check if the URL is valid or empty
     if (urlPattern.test(webUrl) || webUrl === "") {
-      console.log("This is a valid URL or an empty string");
-      console.log(thumbnail, username, bio, webUrl);
-
       // Update user profile, user document, and related posts
-      await updateUserProfile();
+      await updateUserDisplayName();
       await updateUserDocument();
       await updatePostDocuments();
 
@@ -144,8 +137,6 @@ const EditProfile = () => {
 
       setIsModalOpen(false);
     } else {
-      console.log("This is an invalid URL");
-
       // Display an error message for invalid URLs
       setUrlError("Account update failed: URL is not valid.");
       // Set an error message for invalid URLs and clear it after 3 seconds
@@ -193,11 +184,14 @@ const EditProfile = () => {
       </button>
 
       <Modal
-        title="Edit Profile"
         open={isModalOpen}
         onCancel={cancelProfileEditing}
         footer={[
-          <Button key="back" onClick={cancelProfileEditing}>
+          <Button
+            key="back"
+            className="dark:text-white"
+            onClick={cancelProfileEditing}
+          >
             Cancel
           </Button>,
           <Button
@@ -210,12 +204,14 @@ const EditProfile = () => {
           </Button>,
         ]}
       >
+        <p className="text-xl dark:text-white font-medium">Edit profile</p>
+
         <form onSubmit={saveProfileChanges}>
           <div className=" relative flex items-center justify-between mt-6">
             <img
-              className="w-28 h-28 mt-2 rounded-full object-cover object-center border-3 border-teal-500"
-              src={thumbnailPreview || user?.photoURL}
-              alt="Profile Photo Preview"
+              className="w-28 h-28 mt-2 rounded-full object-cover object-center "
+              src={thumbnailPreview ?? user?.photoURL ?? DefaultAvatar}
+              alt={`${user?.displayName} profile picture`}
             />
             <div className=" align-middle">
               <label
@@ -236,14 +232,14 @@ const EditProfile = () => {
           </div>
           <div className="mt-6">
             <label
-              className="text-sm font-medium text-gray-700 leading-5"
+              className="text-sm font-medium text-gray-700 leading-5 dark:text-white"
               htmlFor="username"
             >
               Name
             </label>
             <div className="mt-1 rounded-md shadow-sm">
               <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md outline-blue-500  sm:text-sm "
+                className="w-full px-3 py-2 border border-gray-300 rounded-md outline-blue-500  sm:text-sm dark:bg-[#262626] dark:text-white "
                 id="username"
                 type="text"
                 autoComplete="password"
@@ -255,12 +251,12 @@ const EditProfile = () => {
           </div>
 
           <div className="mt-6">
-            <label className="text-sm font-medium text-gray-700 leading-5">
+            <label className="text-sm font-medium text-gray-700 leading-5 dark:text-white">
               Bio
             </label>
             <div className="mt-1 rounded-md shadow-sm">
               <textarea
-                className=" h-20 w-full outline-none resize-none text-base px-3 py-2 border border-gray-300 rounded-md sm:text-sm sm:leading-5"
+                className=" h-20 w-full outline-none resize-none text-base px-3 py-2 border border-gray-300 rounded-md sm:text-sm sm:leading-5 dark:bg-[#262626] dark:text-white"
                 onChange={(e) => setBio(e.target.value)}
                 value={bio}
               />
@@ -269,14 +265,14 @@ const EditProfile = () => {
 
           <div className="mt-6">
             <label
-              className="text-sm font-medium text-gray-700 leading-5"
+              className="text-sm font-medium text-gray-700 leading-5 dark:text-white"
               htmlFor="urlInput"
             >
               Website
             </label>
             <div className="mt-1 rounded-md shadow-sm">
               <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md sm:text-sm  dark:bg-[#262626] dark:text-white"
                 name="url"
                 type="url"
                 id="urlInput"

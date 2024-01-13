@@ -15,9 +15,6 @@ const Notification = () => {
   const [userNotifications, setUserNotifications] = useState(null);
   const { readNotification } = useFirebase("notification");
 
-  console.log(notificationDocs);
-  console.log(user.uid);
-
   useEffect(() => {
     // Filtering  notifications specific to the current user
     const currentUserNotifications = notificationDocs?.filter(
@@ -65,8 +62,6 @@ const Notification = () => {
     }
   };
 
-  console.log(notificationDocs);
-
   return (
     <div className="container max-w-5xl mx-auto flex flex-col items-center justify-center dark:bg-black ">
       <div className="flex flex-col justify-center mt-8 w-full max-w-3xl   ">
@@ -76,18 +71,19 @@ const Notification = () => {
               <div
                 key={userNotification.id}
                 className="flex items-start gap-2  mb-2 border-b-[1px] border-[#DBDBDB] px-2 py-1 cursor-pointer hover:bg-[#efefef] dark:hover:bg-[#262626]  "
+                onClick={() => readNotificationsHandler(userNotification.id)}
               >
                 <img
                   className="w-12 h-12 object-cover rounded-full"
                   src={userNotification.senderUserPhotoUrl ?? DefaultAvatar}
-                  alt=""
+                  alt={`${userNotification?.senderUserName} profile picture`}
                 />
 
-                <div class="break-words w-full">
-                  <span class="text-base font-semibold cursor-pointer dark:text-white">
+                <div className="break-words w-full">
+                  <span className="text-base font-semibold cursor-pointer dark:text-white">
                     {userNotification.senderUserName}
                   </span>
-                  <p class="break-all inline ml-1 dark:text-white ">
+                  <p className="break-all inline ml-1 dark:text-white ">
                     {notificationMessages(userNotification)}
                   </p>
                   <p className="text-sm text-[#71767b] mt-1 md:text-sm dark:text-[#A8A8A8]">
@@ -101,8 +97,8 @@ const Notification = () => {
                   <div className=" w-20 h-20 md:w-24 md:h-24 ">
                     <img
                       src={userNotification.postData}
-                      alt="icon"
                       className=" w-full h-full object-cover"
+                      alt="post picture"
                     />
                   </div>
                 )}

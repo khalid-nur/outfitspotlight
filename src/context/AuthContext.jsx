@@ -33,8 +33,6 @@ export const AuthContextProvider = ({ children }) => {
     authIsReady: false,
   });
 
-  console.log("AuthContext State", state);
-
   // listen for authentication state changes
   useEffect(() => {
     // Subscribe to onAuthStateChanged, which triggers when user authentication state changes

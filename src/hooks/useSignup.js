@@ -16,7 +16,6 @@ export const useSignup = () => {
     setError(null); // Clear any previous errors
     setIsPending(true); // Set loading state
 
-    console.log(username);
     try {
       // Create user with email and password
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -76,10 +75,9 @@ export const useSignup = () => {
       }
     } catch (err) {
       // Check if the component is not unmounted before updating state
-      if (!isCancelled) {
-        setError(err.message); // Set error message
-        setIsPending(false); // Clear loading state
-      }
+
+      setError(err.message); // Set error message
+      setIsPending(false); // Clear loading state
     }
   };
 

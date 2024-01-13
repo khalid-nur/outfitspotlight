@@ -40,6 +40,12 @@ const UserSidebar = ({ popUp, togglePopup }) => {
     }
   }, [isDark]);
 
+  useEffect(() => {
+    const overflowValue = popUp ? "hidden" : "auto";
+
+    document.body.style.overflow = overflowValue;
+  }, [popUp]);
+
   return (
     <div
       className={`bg-[#f8f7f5] dark:bg-black dark:text-white w-52 h-full md:hidden fixed top-0 right-0  ease-in-out duration-500 ${
@@ -48,9 +54,9 @@ const UserSidebar = ({ popUp, togglePopup }) => {
     >
       <div className="flex flex-col items-end my-2">
         <img
-          className="w-14 h-14 rounded-full mr-4 cursor-pointer"
+          className="w-14 h-14 object-cover rounded-full mr-4 cursor-pointer"
           src={user?.photoURL ?? DefaultAvatar}
-          alt=""
+          alt={`${user.displayName} profile picture`}
           onClick={togglePopup}
         />
 

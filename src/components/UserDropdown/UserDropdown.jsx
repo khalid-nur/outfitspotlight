@@ -50,7 +50,7 @@ const UserDropdown = ({ popUp }) => {
         {/* A clickable link to navigate to user profiles */}
         <Link to={`/profile/${user?.uid}`}>
           <img
-            className="w-14 h-14 rounded-full mr-4 cursor-pointer "
+            className="w-14 h-14 object-cover rounded-full mr-4 cursor-pointer "
             src={user?.photoURL ?? DefaultAvatar}
             alt=""
           />
