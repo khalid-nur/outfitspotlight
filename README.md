@@ -4,7 +4,7 @@ Welcome, OutfitSpotlight is a social media platform for fashion and beauty. Here
 
 # Live Demo
 
-**Visit here:** https://project-osl.web.app/
+**Visit here:** https://outfitspotlight-1c5b0.web.app/
 
 **Sign Up:** Create your account to join our community.
 
